@@ -12,13 +12,12 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-public class MyLocationHandler implements
-        LocationListener {
+public class MyLocationHandler implements LocationListener {
 
     protected GoogleApiClient mGoogleApiClient = null;
     protected TextView mLocationTextView = null;
-    LocationRequest mLocationRequest = null;
-    Context mContext = null;
+    protected LocationRequest mLocationRequest = null;
+    protected Context mContext = null;
 
     public MyLocationHandler(GoogleApiClient client, TextView locationTextView, Context context) {
         mGoogleApiClient = client;
@@ -34,7 +33,7 @@ public class MyLocationHandler implements
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    public void run() {
+    public void start() {
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions

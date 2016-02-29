@@ -13,9 +13,16 @@
     tools:showIn="@layout/activity_main">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=""
+        android:text="No location yet"
         android:id="@+id/location_text" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/location_text"
+        android:text="Sensor"
+        android:id="@+id/accelerometer_text" />
 
 </RelativeLayout>

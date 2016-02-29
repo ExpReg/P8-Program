@@ -1,9 +1,7 @@
 package com.example.expreg.p8_program;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
+import android.hardware.Sensor;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
@@ -19,7 +17,9 @@ public class MainActivity extends AppCompatActivity implements
 
     protected GoogleApiClient mGoogleApiClient = null;
     protected TextView mLocationTextView = null;
+    protected TextView mAccelerometerTextView = null;
     protected MyLocationHandler mLocationHandler = null;
+    protected MySensorHandler mAccelerometerHandler = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +30,12 @@ public class MainActivity extends AppCompatActivity implements
 
         // Gets the text views
         mLocationTextView = (TextView) findViewById(R.id.location_text);
+        mAccelerometerTextView = (TextView) findViewById(R.id.accelerometer_text);
 
         // Creates the sensor handlers
         mLocationHandler = new MyLocationHandler(mGoogleApiClient, mLocationTextView, this);
+        mAccelerometerHandler = new MySensorHandler(mAccelerometerTextView, Sensor.TYPE_ACCELEROMETER, this);
+        // TODO add other sensors same way as accelerometer
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -48,12 +51,14 @@ public class MainActivity extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
+        mAccelerometerHandler.start();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         mLocationHandler.stop();
+        mAccelerometerHandler.stop();
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
@@ -61,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        mLocationHandler.run();
+        mLocationHandler.start();
     }
 
     @Override

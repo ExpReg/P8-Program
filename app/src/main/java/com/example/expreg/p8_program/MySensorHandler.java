@@ -28,8 +28,7 @@ public class MySensorHandler implements SensorEventListener{
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        // TODO find way to get sensor name
-        String str = "Sensor: " + event.values[0];
+        String str = mSensor.getName() + ": " + event.values[0];
         mSensorTextView.setText(str);
     }
 

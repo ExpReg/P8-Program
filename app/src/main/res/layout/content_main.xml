@@ -22,7 +22,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/location_text"
-        android:text="Sensor"
+        android:text="Accelerometer"
         android:id="@+id/accelerometer_text" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/accelerometer_text"
+        android:text="Magnetometer"
+        android:id="@+id/magnetometer_text" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/magnetometer_text"
+        android:text="Gyroscope"
+        android:id="@+id/gyroscope_text" />
 
 </RelativeLayout>

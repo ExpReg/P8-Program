@@ -16,10 +16,18 @@ public class MainActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener {
 
     protected GoogleApiClient mGoogleApiClient = null;
+
+    // Text views
     protected TextView mLocationTextView = null;
     protected TextView mAccelerometerTextView = null;
+    protected TextView mMagnetometerTextView = null;
+    protected TextView mGyroscopeTextView = null;
+
+    // Sensor handlers
     protected MyLocationHandler mLocationHandler = null;
     protected MySensorHandler mAccelerometerHandler = null;
+    protected MySensorHandler mMagnetometerHandler = null;
+    protected MySensorHandler mGyroscopeHandler = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +39,14 @@ public class MainActivity extends AppCompatActivity implements
         // Gets the text views
         mLocationTextView = (TextView) findViewById(R.id.location_text);
         mAccelerometerTextView = (TextView) findViewById(R.id.accelerometer_text);
+        mMagnetometerTextView = (TextView) findViewById(R.id.magnetometer_text);
+        mGyroscopeTextView = (TextView) findViewById(R.id.gyroscope_text);
 
         // Creates the sensor handlers
         mLocationHandler = new MyLocationHandler(mGoogleApiClient, mLocationTextView, this);
         mAccelerometerHandler = new MySensorHandler(mAccelerometerTextView, Sensor.TYPE_ACCELEROMETER, this);
-        // TODO add other sensors same way as accelerometer
+        mMagnetometerHandler = new MySensorHandler(mMagnetometerTextView, Sensor.TYPE_MAGNETIC_FIELD, this);
+        mGyroscopeHandler = new MySensorHandler(mGyroscopeTextView, Sensor.TYPE_GYROSCOPE, this);
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -52,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements
         super.onStart();
         mGoogleApiClient.connect();
         mAccelerometerHandler.start();
+        mMagnetometerHandler.start();
+        mGyroscopeHandler.start();
     }
 
     @Override
@@ -59,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements
         super.onStop();
         mLocationHandler.stop();
         mAccelerometerHandler.stop();
+        mMagnetometerHandler.stop();
+        mGyroscopeHandler.stop();
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }

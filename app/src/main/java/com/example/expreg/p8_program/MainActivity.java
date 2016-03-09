@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.example.expreg.p8_program.DB.MySQLiteHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -18,16 +19,16 @@ public class MainActivity extends AppCompatActivity implements
     protected GoogleApiClient mGoogleApiClient = null;
 
     // Text views
-    protected TextView mLocationTextView = null;
+    //protected TextView mLocationTextView = null;
     protected TextView mAccelerometerTextView = null;
-    protected TextView mMagnetometerTextView = null;
-    protected TextView mGyroscopeTextView = null;
+    //protected TextView mMagnetometerTextView = null;
+    //protected TextView mGyroscopeTextView = null;
 
     // Sensor handlers
-    protected MyLocationHandler mLocationHandler = null;
+    //protected MyLocationHandler mLocationHandler = null;
     protected MySensorHandler mAccelerometerHandler = null;
-    protected MySensorHandler mMagnetometerHandler = null;
-    protected MySensorHandler mGyroscopeHandler = null;
+    //protected MySensorHandler mMagnetometerHandler = null;
+    //protected MySensorHandler mGyroscopeHandler = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,17 +37,20 @@ public class MainActivity extends AppCompatActivity implements
 
         buildGoogleApiClient();
 
+        MySQLiteHelper db = new MySQLiteHelper(this);
+
         // Gets the text views
-        mLocationTextView = (TextView) findViewById(R.id.location_text);
+        //mLocationTextView = (TextView) findViewById(R.id.location_text);
         mAccelerometerTextView = (TextView) findViewById(R.id.accelerometer_text);
-        mMagnetometerTextView = (TextView) findViewById(R.id.magnetometer_text);
-        mGyroscopeTextView = (TextView) findViewById(R.id.gyroscope_text);
+        //mMagnetometerTextView = (TextView) findViewById(R.id.magnetometer_text);
+        //mGyroscopeTextView = (TextView) findViewById(R.id.gyroscope_text);
 
         // Creates the sensor handlers
-        mLocationHandler = new MyLocationHandler(mGoogleApiClient, mLocationTextView, this);
-        mAccelerometerHandler = new MySensorHandler(mAccelerometerTextView, Sensor.TYPE_ACCELEROMETER, this);
-        mMagnetometerHandler = new MySensorHandler(mMagnetometerTextView, Sensor.TYPE_MAGNETIC_FIELD, this);
-        mGyroscopeHandler = new MySensorHandler(mGyroscopeTextView, Sensor.TYPE_GYROSCOPE, this);
+        //mLocationHandler = new MyLocationHandler(mGoogleApiClient, mLocationTextView, this);
+        mAccelerometerHandler = new MySensorHandler(mAccelerometerTextView, Sensor.TYPE_ACCELEROMETER, this, db);
+        //mMagnetometerHandler = new MySensorHandler(mMagnetometerTextView, Sensor.TYPE_MAGNETIC_FIELD, this);
+        //mGyroscopeHandler = new MySensorHandler(mGyroscopeTextView, Sensor.TYPE_GYROSCOPE, this);
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -63,17 +67,17 @@ public class MainActivity extends AppCompatActivity implements
         super.onStart();
         mGoogleApiClient.connect();
         mAccelerometerHandler.start();
-        mMagnetometerHandler.start();
-        mGyroscopeHandler.start();
+        //mMagnetometerHandler.start();
+        //mGyroscopeHandler.start();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mLocationHandler.stop();
+        //mLocationHandler.stop();
         mAccelerometerHandler.stop();
-        mMagnetometerHandler.stop();
-        mGyroscopeHandler.stop();
+        //mMagnetometerHandler.stop();
+        //mGyroscopeHandler.stop();
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
@@ -81,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        mLocationHandler.start();
+        //mLocationHandler.start();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.expreg.p8_program;
 
+import android.hardware.Sensor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -49,10 +50,11 @@ public class MainActivity extends AppCompatActivity implements
 
         // Creates the sensor handlers
         //mLocationHandler = new MyLocationHandler(mGoogleApiClient, mLocationTextView, this);
-        //mAccelerometerHandler = new MySensorHandler(mAccelerometerTextView, Sensor.TYPE_ACCELEROMETER, this, db);
+        mAccelerometerHandler = new MySensorHandler(mAccelerometerTextView, Sensor.TYPE_ACCELEROMETER, this, db);
         //mMagnetometerHandler = new MySensorHandler(mMagnetometerTextView, Sensor.TYPE_MAGNETIC_FIELD, this);
         //mGyroscopeHandler = new MySensorHandler(mGyroscopeTextView, Sensor.TYPE_GYROSCOPE, this);
-        List<SensorMeasure> measures = db.getAllMeasures();
+
+        //List<SensorMeasure> measures = db.getAllMeasures();
     }
 
     protected synchronized void buildGoogleApiClient() {

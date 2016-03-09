@@ -57,4 +57,9 @@ public class MySensorHandler implements SensorEventListener{
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // Do something if accuracy changes
     }
+
+    public String getDBLocation(){
+        return "/data/com.example.expreg.p8_program/databases/" + mDb.getDatabaseName();
+
+    }
 }

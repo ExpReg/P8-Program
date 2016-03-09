@@ -4,7 +4,20 @@ import android.hardware.Sensor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
+import android.os.Environment;
+import android.view.View.OnClickListener;
+import android.widget.Toast;
+import android.app.Activity;
+import android.database.sqlite.SQLiteDatabase;
+
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 
 import com.example.expreg.p8_program.DB.MySQLiteHelper;
 import com.example.expreg.p8_program.Model.SensorMeasure;
@@ -105,5 +118,31 @@ public class MainActivity extends AppCompatActivity implements
         // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
         // onConnectionFailed.
         Log.i("MainActivity", "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+    }
+
+    //Buttons
+
+    public void export(View view){
+        mAccelerometerHandler.stop();
+        File sd = Environment.getExternalStorageDirectory();
+        File data = Environment.getDataDirectory();
+        FileChannel source=null;
+        FileChannel destination=null;
+        String currentDBPath = mAccelerometerHandler.getDBLocation();
+        String copyDBPath = "test.sqlite";
+        File currentDB = new File(data, currentDBPath);
+        File copyDB = new File(sd, copyDBPath);
+
+        try {
+            source = new FileInputStream(currentDB).getChannel();
+            destination = new FileOutputStream(copyDB).getChannel();
+            destination.transferFrom(source, 0, source.size());
+            source.close();
+            destination.close();
+            Toast.makeText(this, "DB Exported!", Toast.LENGTH_LONG).show();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

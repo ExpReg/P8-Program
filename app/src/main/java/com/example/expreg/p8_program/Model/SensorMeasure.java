@@ -61,7 +61,7 @@ public class SensorMeasure {
 
     @Override
     public String toString() {
-        return "SensorMeasure [id=" + id + ", acc_x=" + acc_x + ", acc_y=" + acc_y + ", acc_z=" + acc_z + ", date=" + date.toString()
+        return "SensorMeasure [id=" + id + ", acc_x=" + acc_x + ", acc_y=" + acc_y + ", acc_z=" + acc_z + ", date=" + date
                 + "]";
     }
 }

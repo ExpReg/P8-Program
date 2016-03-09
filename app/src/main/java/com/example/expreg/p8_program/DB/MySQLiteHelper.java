@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.example.expreg.p8_program.Model.SensorMeasure;
 
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -122,7 +123,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     // Get All Books
-    public List<SensorMeasure> getAllSensors() {
+    public List<SensorMeasure> getAllMeasures() {
         List<SensorMeasure> sensors = new LinkedList<SensorMeasure>();
 
         // 1. build the query
@@ -142,14 +143,21 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 sensorMeasure.setAcc_y(cursor.getFloat(2));
                 sensorMeasure.setAcc_z(cursor.getFloat(3));
                 // TODO find non-deprecated method
-                sensorMeasure.setDate(new Date(cursor.getString(4)));
+                try {
+                    sensorMeasure.setDate((Date)DateFormat.getDateInstance().parseObject(cursor.getString(4)));
+                }
+                catch(Exception e) {
+                    Log.d("GetAllException", e.toString());
+                }
+                //sensorMeasure.setDate(new Date(cursor.getString(4)));
+
 
                 // Add book to books
                 sensors.add(sensorMeasure);
             } while (cursor.moveToNext());
         }
 
-        Log.d("getAllSensors()", sensors.toString());
+        Log.d("getAllMeasures()", sensors.toString());
 
         // return books
         return sensors;

@@ -23,7 +23,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public MySQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        //context.deleteDatabase(DATABASE_NAME);
+        context.deleteDatabase(DATABASE_NAME);
     }
 
     @Override
@@ -117,8 +117,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         sensorMeasure.setAcc_x(cursor.getFloat(2));
         sensorMeasure.setAcc_y(cursor.getFloat(3));
         sensorMeasure.setAcc_z(cursor.getFloat(4));
-        // TODO find non-deprecated method
-        sensorMeasure.setDate(new Date(cursor.getString(5)));
+        sensorMeasure.setCreatedAtFromDB(cursor.getString(5));
 
         Log.d("getSensor(" + id + ")", sensorMeasure.toString());
 
@@ -188,7 +187,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put("acc_x", sensorMeasure.getAcc_x());
         values.put("acc_y", sensorMeasure.getAcc_y());
         values.put("acc_z", sensorMeasure.getAcc_z());
-        values.put("date", sensorMeasure.getDate().toString());
+        //values.put("created_at", sensorMeasure.getDateTime());
 
         // 3. updating row
         int i = db.update(TABLE_SENSOR, //table

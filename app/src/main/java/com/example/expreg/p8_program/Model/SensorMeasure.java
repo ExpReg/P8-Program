@@ -1,6 +1,10 @@
 package com.example.expreg.p8_program.Model;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class SensorMeasure {
 
@@ -53,11 +57,13 @@ public class SensorMeasure {
         this.acc_z = acc_z;
     }
 
-    public Date getCreated_at() {
+    /*
+    public Date getCreatedAt() {
         return created_at;
     }
+    */
 
-    public void setCreated_at(Date created_at) {
+    public void setCreatedAt(Date created_at) {
         this.created_at = created_at;
     }
 
@@ -68,24 +74,21 @@ public class SensorMeasure {
         return dateFormat.format(date);
     }
 
-    public Date getConvertedDate(String databaseDate) throws Exception{
+    public void setCreatedAtFromDB(String databaseDate) {
         Date date = new Date();
         try {
             DateFormat formatter;
             formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             date = (Date) formatter.parse(databaseDate);
+            created_at = date;
         } catch (Exception e) {
-            throw e;
+            new Exception(e);
         }
-        if (date == new Date())
-            return null;
-        
-        return date;
     }
 
     @Override
     public String toString() {
-        return "SensorMeasure [id=" + id + ", acc_x=" + acc_x + ", acc_y=" + acc_y + ", acc_z=" + acc_z + ", date=" + date
+        return "SensorMeasure [id=" + id + ", acc_x=" + acc_x + ", acc_y=" + acc_y + ", acc_z=" + acc_z + ", created_at=" + created_at
                 + "]";
     }
 

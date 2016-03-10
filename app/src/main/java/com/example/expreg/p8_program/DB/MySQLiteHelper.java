@@ -35,7 +35,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 "acc_x REAL, " +
                 "acc_y REAL," +
                 "acc_z REAL," +
-                "date TEXT)";
+                "created_at TEXT)";
 
         // create sensor table
         db.execSQL(CREATE_SENSOR_TABLE);
@@ -64,9 +64,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_ACC_X = "acc_x";
     private static final String KEY_ACC_Y = "acc_y";
     private static final String KEY_ACC_Z = "acc_z";
-    private static final String KEY_DATE = "date";
+    private static final String KEY_CREATED_AT = "created_at";
 
-    private static final String[] COLUMNS = {KEY_ID,KEY_TRIP,KEY_ACC_X,KEY_ACC_Y,KEY_ACC_Z,KEY_DATE};
+    private static final String[] COLUMNS = {KEY_ID,KEY_TRIP,KEY_ACC_X,KEY_ACC_Y,KEY_ACC_Z,KEY_CREATED_AT};
 
     public void addMeasure(SensorMeasure sensorMeasure){
         Log.d("addMeasure", sensorMeasure.toString());
@@ -79,7 +79,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_ACC_X, sensorMeasure.getAcc_x());
         values.put(KEY_ACC_Y, sensorMeasure.getAcc_y());
         values.put(KEY_ACC_Z, sensorMeasure.getAcc_z());
-        values.put(KEY_DATE, sensorMeasure.getDate().toString());
+        values.put(KEY_CREATED_AT, sensorMeasure.getDateTime());
 
         // 3. insert
         db.insert(TABLE_SENSOR, // table
@@ -163,15 +163,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 sensorMeasure.setAcc_x(cursor.getFloat(2));
                 sensorMeasure.setAcc_y(cursor.getFloat(3));
                 sensorMeasure.setAcc_z(cursor.getFloat(4));
-                // TODO find non-deprecated method
-                try {
-                    sensorMeasure.setDate((Date)DateFormat.getDateInstance().parseObject(cursor.getString(5)));
-                }
-                catch(Exception e) {
-                    Log.d("GetAllException", e.toString());
-                }
                 //sensorMeasure.setDate(new Date(cursor.getString(4)));
-
 
                 // Add measure to measures
                 sensors.add(sensorMeasure);

@@ -5,6 +5,7 @@ import java.util.Date;
 public class SensorMeasure {
 
     private int id;
+    private int trip;
     private Date date;
     private float acc_x;
     private float acc_y;
@@ -12,7 +13,8 @@ public class SensorMeasure {
 
     public SensorMeasure(){}
 
-    public SensorMeasure(float acc_x, float acc_y, float acc_z) {
+    public SensorMeasure(int trip, float acc_x, float acc_y, float acc_z) {
+        this.trip = trip;
         this.acc_x = acc_x;
         this.acc_y = acc_y;
         this.acc_z = acc_z;
@@ -63,5 +65,13 @@ public class SensorMeasure {
     public String toString() {
         return "SensorMeasure [id=" + id + ", acc_x=" + acc_x + ", acc_y=" + acc_y + ", acc_z=" + acc_z + ", date=" + date
                 + "]";
+    }
+
+    public int getTrip() {
+        return trip;
+    }
+
+    public void setTrip(int trip) {
+        this.trip = trip;
     }
 }

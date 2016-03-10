@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.os.Environment;
 import android.view.View.OnClickListener;
@@ -32,7 +33,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener {
 
-    protected GoogleApiClient mGoogleApiClient = null;
+    //protected GoogleApiClient mGoogleApiClient = null;
 
     // Text views
     //protected TextView mLocationTextView = null;
@@ -46,12 +47,17 @@ public class MainActivity extends AppCompatActivity implements
     //protected MySensorHandler mMagnetometerHandler = null;
     //protected MySensorHandler mGyroscopeHandler = null;
 
+    // Buttons
+    protected Button exportButton = null;
+    protected Button startTripButton = null;
+    protected Button stopTripButton = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        buildGoogleApiClient();
+        //buildGoogleApiClient();
 
         MySQLiteHelper db = new MySQLiteHelper(this);
 
@@ -60,6 +66,12 @@ public class MainActivity extends AppCompatActivity implements
         mAccelerometerTextView = (TextView) findViewById(R.id.accelerometer_text);
         //mMagnetometerTextView = (TextView) findViewById(R.id.magnetometer_text);
         //mGyroscopeTextView = (TextView) findViewById(R.id.gyroscope_text);
+
+        // Gets the buttions
+        exportButton = (Button) findViewById(R.id.exportButton);
+        startTripButton = (Button) findViewById(R.id.startTripButton);
+        stopTripButton = (Button) findViewById(R.id.stopTripButton);
+        stopTripButton.setEnabled(false);
 
         // Creates the sensor handlers
         //mLocationHandler = new MyLocationHandler(mGoogleApiClient, mLocationTextView, this);
@@ -70,20 +82,20 @@ public class MainActivity extends AppCompatActivity implements
         //List<SensorMeasure> measures = db.getAllMeasures();
     }
 
-    protected synchronized void buildGoogleApiClient() {
+    /*protected synchronized void buildGoogleApiClient() {
         Log.i("MainActivity", "Building GoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-    }
+    }*/
 
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
-        mAccelerometerHandler.start();
+        //mGoogleApiClient.connect();
+        //mAccelerometerHandler.start();
         //mMagnetometerHandler.start();
         //mGyroscopeHandler.start();
     }
@@ -95,9 +107,9 @@ public class MainActivity extends AppCompatActivity implements
         mAccelerometerHandler.stop();
         //mMagnetometerHandler.stop();
         //mGyroscopeHandler.stop();
-        if (mGoogleApiClient.isConnected()) {
+        /*if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
-        }
+        }*/
     }
 
     @Override
@@ -110,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements
         // The connection to Google Play services was lost for some reason. We call connect() to
         // attempt to re-establish the connection.
         Log.i("MainActivity", "Connection suspended");
-        mGoogleApiClient.connect();
+        //mGoogleApiClient.connect();
     }
 
     @Override
@@ -123,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements
     //Buttons
 
     public void export(View view){
-        mAccelerometerHandler.stop();
         File sd = Environment.getExternalStorageDirectory();
         File data = Environment.getDataDirectory();
         FileChannel source=null;
@@ -143,6 +154,19 @@ public class MainActivity extends AppCompatActivity implements
         } catch(IOException e) {
             e.printStackTrace();
         }
+    }
 
+    public void startTrip(View view) {
+        mAccelerometerHandler.start();
+        startTripButton.setEnabled(false);
+        stopTripButton.setEnabled(true);
+        exportButton.setEnabled(false);
+    }
+
+    public void stopTrip(View view) {
+        mAccelerometerHandler.stop();
+        startTripButton.setEnabled(true);
+        stopTripButton.setEnabled(false);
+        exportButton.setEnabled(true);
     }
 }

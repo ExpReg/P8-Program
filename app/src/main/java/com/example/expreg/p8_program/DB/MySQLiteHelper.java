@@ -28,43 +28,45 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // SQL statement to create book table
+        // SQL statement to create sensor table
         String CREATE_SENSOR_TABLE = "CREATE TABLE sensor ( " +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "acc_x REAL, "+
+                "trip INTEGER, " +
+                "acc_x REAL, " +
                 "acc_y REAL," +
                 "acc_z REAL," +
                 "date TEXT)";
 
-        // create books table
+        // create sensor table
         db.execSQL(CREATE_SENSOR_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older books table if existed
+        // Drop older sensor table if existed
         db.execSQL("DROP TABLE IF EXISTS sensor");
 
-        // create fresh books table
+        // create fresh sensor table
         this.onCreate(db);
     }
     //---------------------------------------------------------------------
 
     /**
-     * CRUD operations (create "add", read "get", update, delete) book + get all books + delete all books
+     * CRUD operations (create "add", read "get", update, delete) measure + get all measures + delete all measures
      */
 
-    // Books table name
+    // Sensor table name
     private static final String TABLE_SENSOR = "sensor";
 
-    // Books Table Columns names
+    // Sensor Table Columns names
     private static final String KEY_ID = "id";
+    private static final String KEY_TRIP = "trip";
     private static final String KEY_ACC_X = "acc_x";
     private static final String KEY_ACC_Y = "acc_y";
     private static final String KEY_ACC_Z = "acc_z";
     private static final String KEY_DATE = "date";
 
-    private static final String[] COLUMNS = {KEY_ID,KEY_ACC_X,KEY_ACC_Y,KEY_ACC_Z,KEY_DATE};
+    private static final String[] COLUMNS = {KEY_ID,KEY_TRIP,KEY_ACC_X,KEY_ACC_Y,KEY_ACC_Z,KEY_DATE};
 
     public void addMeasure(SensorMeasure sensorMeasure){
         Log.d("addMeasure", sensorMeasure.toString());
@@ -73,9 +75,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         // 2. create ContentValues to add key "column"/value
         ContentValues values = new ContentValues();
-        values.put(KEY_ACC_X, sensorMeasure.getAcc_x()); // get title
-        values.put(KEY_ACC_Y, sensorMeasure.getAcc_y()); // get author
-        values.put(KEY_ACC_Z, sensorMeasure.getAcc_z()); // get author
+        values.put(KEY_TRIP, sensorMeasure.getTrip());
+        values.put(KEY_ACC_X, sensorMeasure.getAcc_x());
+        values.put(KEY_ACC_Y, sensorMeasure.getAcc_y());
+        values.put(KEY_ACC_Z, sensorMeasure.getAcc_z());
         values.put(KEY_DATE, sensorMeasure.getDate().toString());
 
         // 3. insert
@@ -107,22 +110,39 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
-        // 4. build book object
+        // 4. build measure object
         SensorMeasure sensorMeasure = new SensorMeasure();
         sensorMeasure.setId(Integer.parseInt(cursor.getString(0)));
-        sensorMeasure.setAcc_x(cursor.getFloat(1));
-        sensorMeasure.setAcc_y(cursor.getFloat(2));
-        sensorMeasure.setAcc_z(cursor.getFloat(3));
+        sensorMeasure.setTrip(cursor.getInt(1));
+        sensorMeasure.setAcc_x(cursor.getFloat(2));
+        sensorMeasure.setAcc_y(cursor.getFloat(3));
+        sensorMeasure.setAcc_z(cursor.getFloat(4));
         // TODO find non-deprecated method
-        sensorMeasure.setDate(new Date(cursor.getString(4)));
+        sensorMeasure.setDate(new Date(cursor.getString(5)));
 
         Log.d("getSensor(" + id + ")", sensorMeasure.toString());
 
-        // 5. return book
+        // 5. return measures
         return sensorMeasure;
     }
 
-    // Get All Books
+    // Get latest trip
+    public int getLastTrip() {
+        int lastTrip = 0;
+
+        String query = "SELECT MAX(trip) FROM " + TABLE_SENSOR;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        lastTrip = cursor.getInt(0);
+
+        return lastTrip;
+    }
+
+    // Get All Measures
     public List<SensorMeasure> getAllMeasures() {
         List<SensorMeasure> sensors = new LinkedList<SensorMeasure>();
 
@@ -139,12 +159,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             do {
                 sensorMeasure = new SensorMeasure();
                 sensorMeasure.setId(Integer.parseInt(cursor.getString(0)));
-                sensorMeasure.setAcc_x(cursor.getFloat(1));
-                sensorMeasure.setAcc_y(cursor.getFloat(2));
-                sensorMeasure.setAcc_z(cursor.getFloat(3));
+                sensorMeasure.setTrip(cursor.getInt(1));
+                sensorMeasure.setAcc_x(cursor.getFloat(2));
+                sensorMeasure.setAcc_y(cursor.getFloat(3));
+                sensorMeasure.setAcc_z(cursor.getFloat(4));
                 // TODO find non-deprecated method
                 try {
-                    sensorMeasure.setDate((Date)DateFormat.getDateInstance().parseObject(cursor.getString(4)));
+                    sensorMeasure.setDate((Date)DateFormat.getDateInstance().parseObject(cursor.getString(5)));
                 }
                 catch(Exception e) {
                     Log.d("GetAllException", e.toString());
@@ -152,18 +173,18 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 //sensorMeasure.setDate(new Date(cursor.getString(4)));
 
 
-                // Add book to books
+                // Add measure to measures
                 sensors.add(sensorMeasure);
             } while (cursor.moveToNext());
         }
 
         Log.d("getAllMeasures()", sensors.toString());
 
-        // return books
+        // return measures
         return sensors;
     }
 
-    // Updating single book
+    // Updating single measure
     public int updateSensor(SensorMeasure sensorMeasure) {
 
         // 1. get reference to writable DB
@@ -171,9 +192,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         // 2. create ContentValues to add key "column"/value
         ContentValues values = new ContentValues();
-        values.put("acc_x", sensorMeasure.getAcc_x()); // get title
-        values.put("acc_y", sensorMeasure.getAcc_y()); // get author
-        values.put("acc_z", sensorMeasure.getAcc_z()); // get author
+        values.put("trip", sensorMeasure.getTrip());
+        values.put("acc_x", sensorMeasure.getAcc_x());
+        values.put("acc_y", sensorMeasure.getAcc_y());
+        values.put("acc_z", sensorMeasure.getAcc_z());
+        values.put("date", sensorMeasure.getDate().toString());
 
         // 3. updating row
         int i = db.update(TABLE_SENSOR, //table

@@ -16,6 +16,7 @@ public class MySensorHandler implements SensorEventListener{
     protected SensorManager mSensorManager = null;
     protected Sensor mSensor = null;
     protected MySQLiteHelper mDb;
+    protected int mTrip = 0;
 
     public MySensorHandler(TextView view, int sensorType, Context context) {
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -31,6 +32,7 @@ public class MySensorHandler implements SensorEventListener{
     }
 
     public void start() {
+        mTrip = mDb.getLastTrip() + 1;
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
@@ -40,7 +42,7 @@ public class MySensorHandler implements SensorEventListener{
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        SensorMeasure result = new SensorMeasure(event.values[0], event.values[1], event.values[2]);
+        SensorMeasure result = new SensorMeasure(mTrip, event.values[0], event.values[1], event.values[2]);
         Log.d("SensorChanged", "Sensor has changed");
         if (this.mDb != null) {
             mDb.addMeasure(result);

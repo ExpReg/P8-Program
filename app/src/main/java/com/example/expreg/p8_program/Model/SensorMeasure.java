@@ -6,7 +6,7 @@ public class SensorMeasure {
 
     private int id;
     private int trip;
-    private Date date;
+    private Date created_at;
     private float acc_x;
     private float acc_y;
     private float acc_z;
@@ -18,7 +18,7 @@ public class SensorMeasure {
         this.acc_x = acc_x;
         this.acc_y = acc_y;
         this.acc_z = acc_z;
-        date = new Date();
+        created_at = new Date();
     }
 
     public int getId() {
@@ -53,12 +53,34 @@ public class SensorMeasure {
         this.acc_z = acc_z;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getCreated_at() {
+        return created_at;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
+    }
+
+    public String getDateTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        Date date = new Date();
+        return dateFormat.format(date);
+    }
+
+    public Date getConvertedDate(String databaseDate) throws Exception{
+        Date date = new Date();
+        try {
+            DateFormat formatter;
+            formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            date = (Date) formatter.parse(databaseDate);
+        } catch (Exception e) {
+            throw e;
+        }
+        if (date == new Date())
+            return null;
+        
+        return date;
     }
 
     @Override

@@ -162,8 +162,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 sensorMeasure.setAcc_x(cursor.getFloat(2));
                 sensorMeasure.setAcc_y(cursor.getFloat(3));
                 sensorMeasure.setAcc_z(cursor.getFloat(4));
-                //sensorMeasure.setDate(new Date(cursor.getString(4)));
-
+                sensorMeasure.setCreatedAtFromDB(cursor.getString(5));
                 // Add measure to measures
                 sensors.add(sensorMeasure);
             } while (cursor.moveToNext());

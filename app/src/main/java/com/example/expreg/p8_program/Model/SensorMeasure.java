@@ -69,7 +69,7 @@ public class SensorMeasure {
 
     public String getDateTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                "yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault());
         Date date = new Date();
         return dateFormat.format(date);
     }
@@ -78,7 +78,7 @@ public class SensorMeasure {
         Date date = new Date();
         try {
             DateFormat formatter;
-            formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             date = (Date) formatter.parse(databaseDate);
             created_at = date;
         } catch (Exception e) {
@@ -88,7 +88,11 @@ public class SensorMeasure {
 
     @Override
     public String toString() {
-        return "SensorMeasure [id=" + id + ", acc_x=" + acc_x + ", acc_y=" + acc_y + ", acc_z=" + acc_z + ", created_at=" + created_at
+        return "SensorMeasure [id=" + id + ", " +
+                              "acc_x=" + acc_x + ", " +
+                              "acc_y=" + acc_y + ", " +
+                              "acc_z=" + acc_z + ", " +
+                              "created_at=" + getDateTime()
                 + "]";
     }
 

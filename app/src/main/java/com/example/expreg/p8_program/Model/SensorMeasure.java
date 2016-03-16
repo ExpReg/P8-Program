@@ -70,7 +70,7 @@ public class SensorMeasure {
     public String getDateTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 "yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault());
-        Date date = new Date();
+        Date date = created_at;
         return dateFormat.format(date);
     }
 

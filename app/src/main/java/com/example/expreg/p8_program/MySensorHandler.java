@@ -21,6 +21,8 @@ public class MySensorHandler implements SensorEventListener{
     protected double mCutoffAccel = 0.1 * 9.82;
     protected double mCutoffBrake = 0.1 * 9.82;
 
+    protected float[] output;
+
     public MySensorHandler(TextView view, int sensorType, Context context) {
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(sensorType);
@@ -46,6 +48,7 @@ public class MySensorHandler implements SensorEventListener{
     @Override
     public void onSensorChanged(SensorEvent event) {
         SensorMeasure result = new SensorMeasure(mTrip, event.values[0], event.values[1], event.values[2]);
+        output = lowPassFilter(event.values.clone(), output);
         Log.d("SensorChanged", "Sensor has changed");
         if (this.mDb != null) {
             mDb.addMeasure(result);
@@ -72,5 +75,17 @@ public class MySensorHandler implements SensorEventListener{
     public String getDBLocation(){
         return "/data/com.example.expreg.p8_program/databases/" + mDb.getDatabaseName();
 
+    }
+
+    private float[] lowPassFilter(float[] input, float[] output) {
+        float ALPHA = 0.25f; //ALPHA is the cut-off/threshold.
+        if(output == null ) {
+            return input;
+        }
+        for(int i = 0; i < input.length; i++) {
+            output[i] = output[i] + ALPHA * (input[i] - output[i]);
+        }
+
+        return output;
     }
 }

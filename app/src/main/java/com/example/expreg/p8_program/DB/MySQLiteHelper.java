@@ -9,8 +9,6 @@ import android.util.Log;
 
 import com.example.expreg.p8_program.Model.SensorMeasure;
 
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,14 +37,28 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         // create sensor table
         db.execSQL(CREATE_SENSOR_TABLE);
+
+        // SQL statement to create detection table
+        String CREATE_DETECTION_TABLE = "CREATE TABLE detection ( " +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "trip INTEGER, " +
+                "type TEXT, " +
+                "acc_x REAL, " +
+                "acc_y REAL," +
+                "acc_z REAL," +
+                "created_at TEXT)";
+
+        // create detection table
+        db.execSQL(CREATE_DETECTION_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older sensor table if existed
         db.execSQL("DROP TABLE IF EXISTS sensor");
+        db.execSQL("DROP TABLE IF EXISTS detection");
 
-        // create fresh sensor table
+        // create fresh tables
         this.onCreate(db);
     }
     //---------------------------------------------------------------------
@@ -57,16 +69,19 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // Sensor table name
     private static final String TABLE_SENSOR = "sensor";
+    private static final String TABLE_DETECTION = "detection";
 
     // Sensor Table Columns names
     private static final String KEY_ID = "id";
     private static final String KEY_TRIP = "trip";
+    private static final String KEY_TYPE = "type";
     private static final String KEY_ACC_X = "acc_x";
     private static final String KEY_ACC_Y = "acc_y";
     private static final String KEY_ACC_Z = "acc_z";
     private static final String KEY_CREATED_AT = "created_at";
 
-    private static final String[] COLUMNS = {KEY_ID,KEY_TRIP,KEY_ACC_X,KEY_ACC_Y,KEY_ACC_Z,KEY_CREATED_AT};
+    private static final String[] SENSOR_COLUMNS = {KEY_ID,KEY_TRIP,KEY_ACC_X,KEY_ACC_Y,KEY_ACC_Z,KEY_CREATED_AT};
+    private static final String[] DETECTION_COLUMNS = {KEY_ID,KEY_TRIP,KEY_TYPE,KEY_ACC_X,KEY_ACC_Y,KEY_ACC_Z,KEY_CREATED_AT};
 
     public void addMeasure(SensorMeasure sensorMeasure){
         Log.d("addMeasure", sensorMeasure.toString());
@@ -90,7 +105,30 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public SensorMeasure getSensor(int id){
+    public void addDetection(SensorMeasure sensorMeasure, String type) {
+        Log.d("addDetection", type + " " + sensorMeasure.toString());
+        // 1. get reference to writable DB
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // 2. create ContentValues to add key "column"/value
+        ContentValues values = new ContentValues();
+        values.put(KEY_TRIP, sensorMeasure.getTrip());
+        values.put(KEY_TYPE, type);
+        values.put(KEY_ACC_X, sensorMeasure.getAcc_x());
+        values.put(KEY_ACC_Y, sensorMeasure.getAcc_y());
+        values.put(KEY_ACC_Z, sensorMeasure.getAcc_z());
+        values.put(KEY_CREATED_AT, sensorMeasure.getDateTime());
+
+        // 3. insert
+        db.insert(TABLE_DETECTION, // table
+                null, //nullColumnHack
+                values); // key/value -> keys = column names/ values = column values
+
+        // 4. close
+        db.close();
+    }
+
+    public SensorMeasure getMeasure(int id){
 
         // 1. get reference to readable DB
         SQLiteDatabase db = this.getReadableDatabase();
@@ -98,7 +136,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // 2. build query
         Cursor cursor =
                 db.query(TABLE_SENSOR, // a. table
-                        COLUMNS, // b. column names
+                        SENSOR_COLUMNS, // b. column names
                         " id = ?", // c. selections
                         new String[] { String.valueOf(id) }, // d. selections args
                         null, // e. group by
@@ -119,7 +157,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         sensorMeasure.setAcc_z(cursor.getFloat(4));
         sensorMeasure.setCreatedAtFromDB(cursor.getString(5));
 
-        Log.d("getSensor(" + id + ")", sensorMeasure.toString());
+        Log.d("getMeasure(" + id + ")", sensorMeasure.toString());
 
         // 5. return measures
         return sensorMeasure;
@@ -175,7 +213,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     // Updating single measure
-    public int updateSensor(SensorMeasure sensorMeasure) {
+    public int updateMeasure(SensorMeasure sensorMeasure) {
 
         // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
@@ -201,8 +239,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     }
 
-    // Deleting single book
-    public void deleteSensor(SensorMeasure sensorMeasure) {
+    // Deleting single measure
+    public void deleteMeasure(SensorMeasure sensorMeasure) {
 
         // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
@@ -215,7 +253,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // 3. close
         db.close();
 
-        Log.d("deleteSensor", sensorMeasure.toString());
+        Log.d("deleteMeasure", sensorMeasure.toString());
 
     }
 }

@@ -18,6 +18,9 @@ public class MySensorHandler implements SensorEventListener{
     protected MySQLiteHelper mDb;
     protected int mTrip = 0;
 
+    protected double mCutoffAccel = 0.1 * 9.82;
+    protected double mCutoffBrake = 0.1 * 9.82;
+
     public MySensorHandler(TextView view, int sensorType, Context context) {
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(sensorType);
@@ -46,6 +49,12 @@ public class MySensorHandler implements SensorEventListener{
         Log.d("SensorChanged", "Sensor has changed");
         if (this.mDb != null) {
             mDb.addMeasure(result);
+            if (result.getAcc_y() > mCutoffAccel) {
+                mDb.addDetection(result, "Acceleration");
+            }
+            else if (result.getAcc_y() < mCutoffBrake) {
+                mDb.addDetection(result, "Brake");
+            }
         }
         else {
             Log.d("NoDB", "Database is null");

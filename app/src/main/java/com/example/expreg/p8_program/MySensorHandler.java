@@ -19,7 +19,7 @@ public class MySensorHandler implements SensorEventListener{
     protected int mTrip = 0;
 
     protected double mCutoffAccel = 0.1 * 9.82;
-    protected double mCutoffBrake = 0.1 * 9.82;
+    protected double mCutoffBrake = -0.1 * 9.82;
 
     public MySensorHandler(TextView view, int sensorType, Context context) {
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);

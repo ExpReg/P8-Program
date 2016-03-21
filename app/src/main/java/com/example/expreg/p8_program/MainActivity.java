@@ -9,10 +9,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.os.Environment;
-import android.view.View.OnClickListener;
 import android.widget.Toast;
-import android.app.Activity;
-import android.database.sqlite.SQLiteDatabase;
 
 
 import java.io.File;
@@ -22,14 +19,11 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 import com.example.expreg.p8_program.DB.MySQLiteHelper;
-import com.example.expreg.p8_program.Model.SensorMeasure;
+import com.example.expreg.p8_program.SensorHandlers.MyAccelerometerHandler;
+import com.example.expreg.p8_program.SensorHandlers.MySensorHandler;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener {
@@ -68,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements
         //mMagnetometerTextView = (TextView) findViewById(R.id.magnetometer_text);
         //mGyroscopeTextView = (TextView) findViewById(R.id.gyroscope_text);
 
-        // Gets the buttions
+        // Gets the buttons
         exportButton = (Button) findViewById(R.id.exportButton);
         startTripButton = (Button) findViewById(R.id.startTripButton);
         stopTripButton = (Button) findViewById(R.id.stopTripButton);
@@ -76,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Creates the sensor handlers
         //mLocationHandler = new MyLocationHandler(mGoogleApiClient, mLocationTextView, this);
-        mAccelerometerHandler = new MySensorHandler(mAccelerometerTextView, Sensor.TYPE_ACCELEROMETER, this, db);
+        mAccelerometerHandler = new MyAccelerometerHandler(mAccelerometerTextView, this, db);
         //mMagnetometerHandler = new MySensorHandler(mMagnetometerTextView, Sensor.TYPE_MAGNETIC_FIELD, this);
         //mGyroscopeHandler = new MySensorHandler(mGyroscopeTextView, Sensor.TYPE_GYROSCOPE, this);
 
@@ -98,9 +92,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
         //mGoogleApiClient.connect();
-        //mAccelerometerHandler.start();
-        //mMagnetometerHandler.start();
-        //mGyroscopeHandler.start();
     }
 
     @Override
@@ -115,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements
         }*/
     }
 
+    // Google play services methods
     @Override
     public void onConnected(Bundle bundle) {
         //mLocationHandler.start();
@@ -136,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     //Buttons
-
     public void export(View view){
         File sd = Environment.getExternalStorageDirectory();
         File data = Environment.getDataDirectory();

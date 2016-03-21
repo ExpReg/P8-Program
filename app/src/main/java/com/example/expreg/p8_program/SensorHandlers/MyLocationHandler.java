@@ -1,4 +1,4 @@
-package com.example.expreg.p8_program;
+package com.example.expreg.p8_program.SensorHandlers;
 
 import android.Manifest;
 import android.content.Context;

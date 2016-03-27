@@ -28,9 +28,9 @@ public abstract class MySensorHandler implements SensorEventListener{
         mDb = db;
     }
 
-    public void start() {
+    public void start(int frequency) {
         mTrip = mDb.getLastTrip() + 1;
-        mSensorManager.registerListener(this, mSensor, 50000); //50000 microseconds, so 20Hz
+        mSensorManager.registerListener(this, mSensor, 1000000 / frequency);
     }
 
     public void stop() {

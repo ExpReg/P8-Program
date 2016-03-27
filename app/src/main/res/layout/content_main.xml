@@ -39,13 +39,20 @@
         android:text="Gyroscope"
         android:id="@+id/gyroscope_text" />
 
+    <EditText android:id="@+id/freq_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:layout_below="@+id/gyroscope_text"
+        android:hint="@string/freq_message" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start Trip"
         android:onClick="startTrip"
         android:id="@+id/startTripButton"
-        android:layout_below="@+id/gyroscope_text"
+        android:layout_below="@+id/freq_message"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="53dp" />

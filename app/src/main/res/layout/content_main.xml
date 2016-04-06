@@ -12,19 +12,21 @@
     tools:context="com.example.expreg.p8_program.MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <!--
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="No location yet"
         android:id="@+id/location_text" />
+    -->
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/location_text"
-        android:text="Accelerometer"
+        android:text="Accelerometer x-axis: \nAccelerometer y-axis: \nAccelerometer z-axis:"
         android:id="@+id/accelerometer_text" />
 
+    <!--
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,12 +40,13 @@
         android:layout_below="@id/magnetometer_text"
         android:text="Gyroscope"
         android:id="@+id/gyroscope_text" />
+    -->
 
     <EditText android:id="@+id/freq_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:layout_below="@+id/gyroscope_text"
+        android:layout_below="@+id/accelerometer_text"
         android:hint="@string/freq_message" />
 
     <Button

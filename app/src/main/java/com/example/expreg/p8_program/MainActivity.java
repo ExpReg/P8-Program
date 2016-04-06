@@ -3,10 +3,13 @@ package com.example.expreg.p8_program;
 import android.hardware.Sensor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.os.Environment;
 import android.widget.Toast;
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements
     protected TextView mAccelerometerTextView = null;
     //protected TextView mMagnetometerTextView = null;
     //protected TextView mGyroscopeTextView = null;
+    protected EditText mFreqChange = null;
 
     // Sensor handlers
     //protected MyLocationHandler mLocationHandler = null;
@@ -61,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements
         mAccelerometerTextView = (TextView) findViewById(R.id.accelerometer_text);
         //mMagnetometerTextView = (TextView) findViewById(R.id.magnetometer_text);
         //mGyroscopeTextView = (TextView) findViewById(R.id.gyroscope_text);
+        mFreqChange = (EditText) findViewById(R.id.freq_message);
 
         // Gets the buttons
         exportButton = (Button) findViewById(R.id.exportButton);
@@ -151,7 +156,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void startTrip(View view) {
-        mAccelerometerHandler.start();
+        int frequency = Integer.parseInt(mFreqChange.getText().toString());
+        mAccelerometerHandler.start(frequency);
         startTripButton.setEnabled(false);
         stopTripButton.setEnabled(true);
         exportButton.setEnabled(false);

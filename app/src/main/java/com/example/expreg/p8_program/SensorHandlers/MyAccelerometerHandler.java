@@ -35,8 +35,9 @@ public class MyAccelerometerHandler extends MySensorHandler {
         else {
             Log.d("NoDB", "Database is null");
         }
-
-        String str = "Accelerometer y-axis: " + event.values[1];
-        mSensorTextView.setText(str);
+        String strx = "Accelerometer x-axis: " + event.values[0] + "\n";
+        String stry = "Accelerometer y-axis: " + event.values[1] + "\n";
+        String strz = "Accelerometer z-axis: " + event.values[2];
+        mSensorTextView.setText(strx + stry + strz);
     }
 }

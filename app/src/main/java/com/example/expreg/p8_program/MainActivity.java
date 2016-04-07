@@ -1,5 +1,7 @@
 package com.example.expreg.p8_program;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -158,8 +160,16 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void deleteDB(View view){
-        db.deleteDB(this);
-        Toast.makeText(this, "DB Deleted!", Toast.LENGTH_LONG).show();
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Database")
+                .setMessage("Do you really want to delete the database?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        db.deleteDB();
+                        Toast.makeText(MainActivity.this, "DB Deleted!", Toast.LENGTH_LONG).show();
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
     }
 
     public void startTrip(View view) {

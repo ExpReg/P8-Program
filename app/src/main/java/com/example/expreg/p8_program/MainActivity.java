@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener {
 
     //protected GoogleApiClient mGoogleApiClient = null;
+    MySQLiteHelper db = null;
 
     // Text views
     //protected TextView mLocationTextView = null;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements
 
     // Buttons
     protected Button exportButton = null;
+    protected Button deleteButton = null;
     protected Button startTripButton = null;
     protected Button stopTripButton = null;
 
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements
 
         //buildGoogleApiClient();
 
-        MySQLiteHelper db = new MySQLiteHelper(this);
+        db = new MySQLiteHelper(this);
 
         // Gets the text views
         //mLocationTextView = (TextView) findViewById(R.id.location_text);
@@ -153,6 +155,11 @@ public class MainActivity extends AppCompatActivity implements
         } catch(IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void deleteDB(View view){
+        db.deleteDB(this);
+        Toast.makeText(this, "DB Deleted!", Toast.LENGTH_LONG).show();
     }
 
     public void startTrip(View view) {

@@ -61,6 +61,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // create fresh tables
         this.onCreate(db);
     }
+
+    public void deleteDB(Context context) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS sensor");
+        db.execSQL("DROP TABLE IF EXISTS detection");
+
+        this.onCreate(db);
+    }
+
     //---------------------------------------------------------------------
 
     /**

@@ -1,11 +1,11 @@
 library(RSQLite)
 require(RSQLite)
-setwd("home/expreg/AndroidStudioProjects/P8-Program/R")
+setwd("C:/Users/admin/Desktop/Projekt/Program/P8-Program/R/")
 
 #connection to database  
-con = dbConnect(SQLite(), dbname="test.sqlite")
+con = dbConnect(SQLite(), dbname="07-04-2016.sqlite")
 
-tripNr <-2 
+tripNr <-7 
 
 #Queries 
 dates <- dbGetQuery(con,paste("SELECT created_at FROM sensor WHERE trip =", tripNr,sep = ""))
@@ -22,13 +22,23 @@ x_values <- accerlationAxes[[1]]
 y_values <- accerlationAxes[[3]]
 z_values <- accerlationAxes[[2]]
 
+#defing main dataframe with for full interval
+myDataFrame <- data.frame(timeRelativetoStart, y_values)
+
+#dataFrame for interval: 300 to 420 sec
+dataFrame300To420 <- myDataFrame[myDataFrame$timeRelativetoStart > 300 & 
+                                  myDataFrame$timeRelativetoStart < 420,]
+
+plot(dataFrame300To420)
+
+
 #total accerlation for all axes
 allAxes <- sqrt(x_values^2 + y_values^2 + z_values^2)
 
 #x-axis 
 plot(timeRelativetoStart,x_values)
 #y-axis
-plot(timeRelativetoStart,y_values)
+plot(timeRelativetoStart,y_values, ylim=c(-2,2))
 #z-axis
 plot(timeRelativetoStart,z_values)
 

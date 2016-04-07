@@ -14,6 +14,8 @@ public abstract class MySensorHandler implements SensorEventListener{
     protected MySQLiteHelper mDb;
     protected int mTrip = 0;
     protected float[] mOutput;
+    protected int frequency = 0;
+
 
     public MySensorHandler(TextView view, int sensorType, Context context) {
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -29,6 +31,7 @@ public abstract class MySensorHandler implements SensorEventListener{
     }
 
     public void start(int frequency) {
+        this.frequency = frequency;
         mTrip = mDb.getLastTrip() + 1;
         mSensorManager.registerListener(this, mSensor, 1000000 / frequency);
     }

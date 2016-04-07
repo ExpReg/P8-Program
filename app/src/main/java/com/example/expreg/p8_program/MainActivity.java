@@ -1,5 +1,7 @@
 package com.example.expreg.p8_program;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener {
 
     //protected GoogleApiClient mGoogleApiClient = null;
+    MySQLiteHelper db = null;
 
     // Text views
     //protected TextView mLocationTextView = null;
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements
 
     // Buttons
     protected Button exportButton = null;
+    protected Button deleteButton = null;
     protected Button startTripButton = null;
     protected Button stopTripButton = null;
 
@@ -58,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements
 
         //buildGoogleApiClient();
 
-        MySQLiteHelper db = new MySQLiteHelper(this);
+        db = new MySQLiteHelper(this);
 
         // Gets the text views
         //mLocationTextView = (TextView) findViewById(R.id.location_text);
@@ -69,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Gets the buttons
         exportButton = (Button) findViewById(R.id.exportButton);
+        deleteButton = (Button) findViewById(R.id.deleteButton);
         startTripButton = (Button) findViewById(R.id.startTripButton);
         stopTripButton = (Button) findViewById(R.id.stopTripButton);
         stopTripButton.setEnabled(false);
@@ -110,6 +115,9 @@ public class MainActivity extends AppCompatActivity implements
             mGoogleApiClient.disconnect();
         }*/
     }
+
+    // onPause
+    // onResume
 
     // Google play services methods
     @Override
@@ -155,12 +163,26 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    public void deleteDB(View view){
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Database")
+                .setMessage("Do you really want to delete the database?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        db.deleteDB();
+                        Toast.makeText(MainActivity.this, "DB Deleted!", Toast.LENGTH_LONG).show();
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+    }
+
     public void startTrip(View view) {
         int frequency = Integer.parseInt(mFreqChange.getText().toString());
         mAccelerometerHandler.start(frequency);
         startTripButton.setEnabled(false);
         stopTripButton.setEnabled(true);
         exportButton.setEnabled(false);
+        deleteButton.setEnabled(false);
     }
 
     public void stopTrip(View view) {
@@ -168,5 +190,6 @@ public class MainActivity extends AppCompatActivity implements
         startTripButton.setEnabled(true);
         stopTripButton.setEnabled(false);
         exportButton.setEnabled(true);
+        deleteButton.setEnabled(true);
     }
 }

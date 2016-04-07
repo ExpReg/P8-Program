@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Gets the buttons
         exportButton = (Button) findViewById(R.id.exportButton);
+        deleteButton = (Button) findViewById(R.id.deleteButton);
         startTripButton = (Button) findViewById(R.id.startTripButton);
         stopTripButton = (Button) findViewById(R.id.stopTripButton);
         stopTripButton.setEnabled(false);
@@ -114,6 +115,9 @@ public class MainActivity extends AppCompatActivity implements
             mGoogleApiClient.disconnect();
         }*/
     }
+
+    // onPause
+    // onResume
 
     // Google play services methods
     @Override
@@ -178,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements
         startTripButton.setEnabled(false);
         stopTripButton.setEnabled(true);
         exportButton.setEnabled(false);
+        deleteButton.setEnabled(false);
     }
 
     public void stopTrip(View view) {
@@ -185,5 +190,6 @@ public class MainActivity extends AppCompatActivity implements
         startTripButton.setEnabled(true);
         stopTripButton.setEnabled(false);
         exportButton.setEnabled(true);
+        deleteButton.setEnabled(true);
     }
 }

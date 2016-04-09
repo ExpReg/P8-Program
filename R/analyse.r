@@ -22,8 +22,13 @@ x_values <- accerlationAxes[[1]]
 y_values <- accerlationAxes[[3]]
 z_values <- accerlationAxes[[2]]
 
-filtered <- SMA(y_values,15)
+##HAVE A DEMONSTRATION BJARKE (run the the whole thing then these plots/remember to run functions first)
+filtered <- SMA(y_values,50)
 filtertimeRelativetoStart <- timeRelativetoStart[seq(15,length(timeRelativetoStart),15)]
+plot(timeRelativetoStart,y_values, xlab = "Time \n s", ylab = "acceleration  m/s^2",main = "y-axis")
+plot(timeRelativetoStart,filtered, xlab = "Time \n s", ylab = "acceleration  m/s^2",main = "y-axis")
+###################################
+
 #defing main dataframe with for full interval
 myDataFrame <- data.frame(timeRelativetoStart, y_values)
 #dataFrame for interval: 300 to 420 sec
@@ -104,8 +109,11 @@ plotAllInOne <- function(toPlot){
 #USED FOR FILTERING
 SMA <- function(data,k){
   myVect <- vector()
-  for(i in seq(k,length(data), k)){
-    myVect[i] <- sum(data[(i-(k-1)):i]) / k 
+  for(i in seq(1,length(data), 1)){
+    if(i <= k)
+      myVect[i] <- sum(data[1:i])/i 
+    else 
+      myVect[i] <- sum(data[(i-(k-1)):i]) / k 
   }
   myVect[!is.na(myVect)]
 }

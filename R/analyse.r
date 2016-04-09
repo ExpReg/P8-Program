@@ -49,8 +49,9 @@ OneMeter <- allTrips[c(1,2,3,4,6)]
 Meter125 <- allTrips[c(8,9,10,11,12)]
 Meter150 <- allTrips[c(13,14,15,16,17)]
 
-plotAllInOne(allTrips[[9]])
 
+plotAllInOne(allTrips[[13]])
+plotAll(allTrips[[13]])
 
 
 #TRIP RELATED FUNCTIONS 
@@ -96,6 +97,7 @@ plotAllInOne <- function(toPlot){
   ploty(toPlot)
   plotz(toPlot)
   plotAll(toPlot)
+  par(mfrow = c(1,1))
 }
 
 

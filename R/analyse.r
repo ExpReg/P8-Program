@@ -1,7 +1,8 @@
 library(RSQLite)
 library(functional)
 require(RSQLite)
-setwd("C:\\Users\\bjarke\\Desktop\\uni\\aau\\Dat 8\\Projekt\\P8-Program\\R")
+#setwd("C:\\Users\\bjarke\\Desktop\\uni\\aau\\Dat 8\\Projekt\\P8-Program\\R")
+setwd("C:\\Users\\Mads\\Documents\\GitHub\\P8-Program\\R")
 #connection to database  
 con = dbConnect(SQLite(), dbname="07-04-2016.sqlite")
 
@@ -54,13 +55,12 @@ OneMeter <- allTrips[c(1,2,3,4,6)]
 Meter125 <- allTrips[c(8,9,10,11,12)]
 Meter150 <- allTrips[c(13,14,15,16,17)]
 
-
 #btc 10042016, added logic for filtering part of dataframe and finding the falltime for a trip
 myDataFrameAllAxes <- getDataFrame(6) 
-dataFrameAllAxes300To360 <- myDataFrameAllAxes[myDataFrameAllAxes$allTrips..tripNo...allAxes < 7,]
-getFallTime(dataFrameAllAxes300To360$allTrips..tripNo...relativeTime) 
+dataFrameAllAxes300To360 <- myDataFrameAllAxes[myDataFrameAllAxes$allTrips..tripNo...allAxes < 2,]
+fallTime <- getFallTime(dataFrameAllAxes300To360$allTrips..tripNo...relativeTime) 
 
-getDataFrame <- function(tripNo){
+getDataFrame<- function(tripNo){
   return(data.frame(allTrips[[tripNo]]$relativeTime,allTrips[[tripNo]]$allAxes))
 }
 
@@ -72,6 +72,22 @@ getFallTime <- function(dataFrame){
     return(fallTime)
   }
 }
+
+
+fall <- function(tripNr){
+  allAxes <- getDataFrame(tripNr)
+  allAxes2 <- allAxes[allAxes$allTrips..tripNo...allAxes < 1,]
+  return(getFallTime(allAxes2$allTrips..tripNo...relativeTime))
+}
+
+allFalltimes <- function(trips){
+  fallTimes <- vector()
+  for(i in 1:length(trips)){
+    fallTimes[[i]] <- fall(i)
+  }
+  return(fallTimes)
+}
+
 
 plotAllInOne(allTrips[[1]])
 plotAll(allTrips[[1]])
@@ -136,5 +152,12 @@ SMA <- function(data,k){
   myVect[!is.na(myVect)]
 }
 
+
+filterDataFrame <- function(data,k){
+  time <- data[c(1,2)]
+  data <- data[3:6]
+  filteredData <- apply(data,2,function(x) SMA(x,k))
+  return(data.frame(time,filteredData))
+}
 
 

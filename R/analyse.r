@@ -1,7 +1,7 @@
 library(RSQLite)
 library(functional)
 require(RSQLite)
-setwd("C:\\Users\\Mads\\Documents\\GitHub\\P8-Program\\R")
+setwd("C:\\Users\\bjarke\\Desktop\\uni\\aau\\Dat 8\\Projekt\\P8-Program\\R")
 #connection to database  
 con = dbConnect(SQLite(), dbname="07-04-2016.sqlite")
 
@@ -55,8 +55,26 @@ Meter125 <- allTrips[c(8,9,10,11,12)]
 Meter150 <- allTrips[c(13,14,15,16,17)]
 
 
-plotAllInOne(allTrips[[13]])
-plotAll(allTrips[[13]])
+#btc 10042016, added logic for filtering part of dataframe and finding the falltime for a trip
+myDataFrameAllAxes <- getDataFrame(6) 
+dataFrameAllAxes300To360 <- myDataFrameAllAxes[myDataFrameAllAxes$allTrips..tripNo...allAxes < 7,]
+getFallTime(dataFrameAllAxes300To360$allTrips..tripNo...relativeTime) 
+
+getDataFrame <- function(tripNo){
+  return(data.frame(allTrips[[tripNo]]$relativeTime,allTrips[[tripNo]]$allAxes))
+}
+
+getFallTime <- function(dataFrame){
+  if(is.null(dataFrame))
+    return("dataFrame is empty")
+  else {
+    fallTime = max(dataFrame) - min(dataFrame)  
+    return(fallTime)
+  }
+}
+
+plotAllInOne(allTrips[[1]])
+plotAll(allTrips[[1]])
 
 
 #TRIP RELATED FUNCTIONS 

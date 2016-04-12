@@ -7,37 +7,53 @@ import android.hardware.SensorManager;
 import android.widget.TextView;
 import com.example.expreg.p8_program.DB.MySQLiteHelper;
 
-public abstract class MySensorHandler implements SensorEventListener{
+public abstract class MySensorHandler implements SensorEventListener {
     protected TextView mSensorTextView = null;
     protected SensorManager mSensorManager = null;
     protected Sensor mSensor = null;
     protected MySQLiteHelper mDb;
+    protected Context mContext;
     protected int mTrip = 0;
     protected float[] mOutput;
     protected int frequency = 0;
+    protected boolean calibrate = false;
+    protected MyCalibrationManager mCalibrationManager = null;
 
 
     public MySensorHandler(TextView view, int sensorType, Context context) {
-        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(sensorType);
-        mSensorTextView = view;
+        this(view, sensorType, context, null);
     }
 
     public MySensorHandler(TextView view, int sensorType, Context context, MySQLiteHelper db) {
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        mContext = context;
         mSensor = mSensorManager.getDefaultSensor(sensorType);
         mSensorTextView = view;
         mDb = db;
     }
 
     public void start(int frequency) {
+        this.start(frequency, false);
+    }
+
+    public void start(int frequency, boolean calibrate) {
+        this.calibrate = calibrate;
+        if (calibrate == true) {
+            mCalibrationManager = new MyCalibrationManager(mContext);
+        }
         this.frequency = frequency;
-        mTrip = mDb.getLastTrip() + 1;
+        if (mDb != null) {
+            mTrip = mDb.getLastTrip() + 1;
+        }
         mSensorManager.registerListener(this, mSensor, 1000000 / frequency);
     }
 
     public void stop() {
         mSensorManager.unregisterListener(this);
+        if (this.calibrate == true) {
+            mCalibrationManager.save();
+        }
+        this.calibrate = false;
     }
 
     @Override

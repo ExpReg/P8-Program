@@ -24,7 +24,9 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 import com.example.expreg.p8_program.DB.MySQLiteHelper;
+import com.example.expreg.p8_program.Model.AccelerometerMeasure;
 import com.example.expreg.p8_program.SensorHandlers.MyAccelerometerHandler;
+import com.example.expreg.p8_program.SensorHandlers.MyCalibrationManager;
 import com.example.expreg.p8_program.SensorHandlers.MySensorHandler;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -35,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements
 
     //protected GoogleApiClient mGoogleApiClient = null;
     MySQLiteHelper db = null;
+    AccelerometerMeasure calibrateAvg = null;
+    AccelerometerMeasure calibrateVar = null;
 
     // Text views
     //protected TextView mLocationTextView = null;
@@ -54,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements
     protected Button deleteButton = null;
     protected Button startTripButton = null;
     protected Button stopTripButton = null;
+    protected Button startCalibrationButton = null;
+    protected Button stopCalibrationButton = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +82,18 @@ public class MainActivity extends AppCompatActivity implements
         deleteButton = (Button) findViewById(R.id.deleteButton);
         startTripButton = (Button) findViewById(R.id.startTripButton);
         stopTripButton = (Button) findViewById(R.id.stopTripButton);
+        startCalibrationButton = (Button) findViewById(R.id.startCalibrationButton);
+        stopCalibrationButton = (Button) findViewById(R.id.stopCalibrationButton);
+
         stopTripButton.setEnabled(false);
+        stopCalibrationButton.setEnabled(false);
+
+        // Gets the calibration stuff from file
+        File file = new File(MyCalibrationManager.filename);
+        if(file.exists()) {
+            this.calibrateAvg = MyCalibrationManager.readAverage(this);
+            this.calibrateVar = MyCalibrationManager.readVariance(this);
+        }
 
         // Creates the sensor handlers
         //mLocationHandler = new MyLocationHandler(mGoogleApiClient, mLocationTextView, this);
@@ -180,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements
         int frequency = Integer.parseInt(mFreqChange.getText().toString());
         mAccelerometerHandler.start(frequency);
         startTripButton.setEnabled(false);
+        startCalibrationButton.setEnabled(false);
         stopTripButton.setEnabled(true);
         exportButton.setEnabled(false);
         deleteButton.setEnabled(false);
@@ -188,8 +206,30 @@ public class MainActivity extends AppCompatActivity implements
     public void stopTrip(View view) {
         mAccelerometerHandler.stop();
         startTripButton.setEnabled(true);
+        startCalibrationButton.setEnabled(true);
         stopTripButton.setEnabled(false);
         exportButton.setEnabled(true);
         deleteButton.setEnabled(true);
+    }
+
+    public void startCalibration(View view) {
+        int frequency = Integer.parseInt(mFreqChange.getText().toString());
+        mAccelerometerHandler.start(frequency, true);
+        startTripButton.setEnabled(false);
+        startCalibrationButton.setEnabled(false);
+        stopCalibrationButton.setEnabled(true);
+        exportButton.setEnabled(false);
+        deleteButton.setEnabled(false);
+    }
+
+    public void stopCalibration(View view) {
+        mAccelerometerHandler.stop();
+        startTripButton.setEnabled(true);
+        startCalibrationButton.setEnabled(true);
+        stopCalibrationButton.setEnabled(false);
+        exportButton.setEnabled(true);
+        deleteButton.setEnabled(true);
+        this.calibrateAvg = MyCalibrationManager.readAverage(this);
+        this.calibrateVar = MyCalibrationManager.readVariance(this);
     }
 }

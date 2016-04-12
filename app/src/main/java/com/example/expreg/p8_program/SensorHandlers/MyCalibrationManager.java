@@ -16,9 +16,9 @@ import java.util.Queue;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 
 public class MyCalibrationManager {
-    Queue<AccelerometerMeasure> measures = new CircularFifoQueue<>(200);
-    Context context = null;
-    String filename = "calibration.conf";
+    private Queue<AccelerometerMeasure> measures = new CircularFifoQueue<>(200);
+    private Context context = null;
+    public static String filename = "calibration.conf";
 
     public MyCalibrationManager(Context context) {
         this.context = context;
@@ -63,7 +63,6 @@ public class MyCalibrationManager {
         try {
             File file = new File(context.getFilesDir(),filename);
             FileWriter fw = new FileWriter(file);
-            BufferedWriter br = new BufferedWriter(fw);
             fw.write((avg.getAcc_x() + "\n"));
             fw.write((avg.getAcc_y() + "\n"));
             fw.write((avg.getAcc_z() + "\n"));
@@ -77,7 +76,7 @@ public class MyCalibrationManager {
         }
     }
 
-    public AccelerometerMeasure readAverage() {
+    public static AccelerometerMeasure readAverage(Context context) {
         AccelerometerMeasure avg = null;
 
         try {
@@ -99,7 +98,7 @@ public class MyCalibrationManager {
         return avg;
     }
 
-    public AccelerometerMeasure readVariance() {
+    public static AccelerometerMeasure readVariance(Context context) {
         AccelerometerMeasure var = null;
 
         try {

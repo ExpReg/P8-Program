@@ -48,7 +48,7 @@ plot(timeRelativetoStart,z_values, xlab = "Time \n s", ylab = "acceleration  m/s
 plot(timeRelativetoStart,allAxes, xlab = "Time \n s", ylab = "acceleration  m/s^2",main = "AllAxes")
 
 
-myConnection <- dbConnect(SQLite(), dbname="faldtest.sqlite")
+myConnection <- dbConnect(SQLite(), dbname="sliding.sqlite")
 
 allTrips <- getAllTrips(myConnection)
 OneMeter <- allTrips[c(1,2,3,4,6)]
@@ -76,7 +76,7 @@ getFallTime <- function(dataFrame){
 
 fall <- function(tripNr){
   allAxes <- getDataFrame(tripNr)
-  allAxes2 <- allAxes[allAxes$allTrips..tripNo...allAxes < 1,]
+  allAxes2 <- allAxes[allAxes$allTrips..tripNo...allAxes < 0.5,]
   return(getFallTime(allAxes2$allTrips..tripNo...relativeTime))
 }
 
@@ -159,5 +159,36 @@ filterDataFrame <- function(data,k){
   filteredData <- apply(data,2,function(x) SMA(x,k))
   return(data.frame(time,filteredData))
 }
+
+getTimeAll<- function(dataFrame){
+  dataFrame[c(2,6)]
+}
+
+selectValues <- function(data){
+  subset(data,allAxes < 0.5)
+}
+
+determineFutureDiff <- function(data){
+  fall <- selectValues(data)
+  middleTime <- (max(fall[,1]) + min(fall[,1])) / 2
+  past <- subset(data, relativeTime > (middleTime - 1) & relativeTime < middleTime)
+  future <- subset(data, relativeTime < (middleTime  + 1 ) & relativeTime > middleTime)
+  pastDiff <- max(past[,2]) - min(past[,2])
+  futureDiff <- max(future[,2]) - min(future[,2])
+  unlist(futureDiff)
+}
+
+determinePastDiff <-function(data){
+  fall <- selectValues(data)
+  middleTime <- (max(fall[,1]) + min(fall[,1])) / 2
+  past <- subset(data, relativeTime > (middleTime - 1) & relativeTime < middleTime)
+  future <- subset(data, relativeTime < (middleTime  + 1 ) & relativeTime > middleTime)
+  pastDiff <- max(past[,2]) - min(past[,2])
+  futureDiff <- max(future[,2]) - min(future[,2])
+  unlist(pastDiff) 
+}
+
+
+
 
 

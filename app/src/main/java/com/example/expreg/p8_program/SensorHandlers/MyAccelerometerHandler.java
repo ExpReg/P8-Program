@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.example.expreg.p8_program.DB.MySQLiteHelper;
 import com.example.expreg.p8_program.Model.AccelerometerMeasure;
-import com.example.expreg.p8_program.Model.SensorMeasure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +26,12 @@ public class MyAccelerometerHandler extends MySensorHandler {
     public void onSensorChanged(SensorEvent event) {
 
         if(this.frequency == 100)
-            frequncyHandler(event);
+            frequencyHandler(event);
         else {
             AccelerometerMeasure result = new AccelerometerMeasure(mTrip, event.values[0], event.values[1], event.values[2]);
             mOutput = lowPassFilter(event.values.clone(), mOutput);
             Log.d("SensorChanged", "Sensor has changed");
-            if (this.mDb != null) {
+            if (this.mDb != null && this.calibrate == false) {
                 mDb.addMeasure(result);
                 if (result.getAcc_y() > mCutoffAccel) {
                     mDb.addDetection(result, "Acceleration");
@@ -40,7 +39,10 @@ public class MyAccelerometerHandler extends MySensorHandler {
                     mDb.addDetection(result, "Brake");
                 }
             } else {
-                Log.d("NoDB", "Database is null");
+                Log.d("NoDB", "Database is null or calibrating");
+            }
+            if (calibrate == true) {
+                mCalibrationManager.add(result);
             }
             String strx = "Accelerometer x-axis: " + event.values[0] + "\n";
             String stry = "Accelerometer y-axis: " + event.values[1] + "\n";
@@ -49,15 +51,18 @@ public class MyAccelerometerHandler extends MySensorHandler {
         }
     }
 
-    private void frequncyHandler(SensorEvent event){
+    private void frequencyHandler(SensorEvent event){
         AccelerometerMeasure result = new AccelerometerMeasure(mTrip, event.values[0], event.values[1], event.values[2]);
         myList.add(result);
+        if (calibrate == true) {
+            mCalibrationManager.add(result);
+        }
     }
 
     @Override
     public void stop(){
         super.stop();
-        if(this.frequency == 100){
+        if(this.frequency == 100 && mDb != null && calibrate == false){
             for (AccelerometerMeasure r:this.myList
                  ) {
                 mDb.addMeasure(r);

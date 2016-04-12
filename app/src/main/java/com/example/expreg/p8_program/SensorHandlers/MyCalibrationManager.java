@@ -18,12 +18,9 @@ import org.apache.commons.collections4.queue.CircularFifoQueue;
 public class MyCalibrationManager {
     Queue<AccelerometerMeasure> measures = new CircularFifoQueue<>(200);
     Context context = null;
-    TextView textView = null;
-    MyAccelerometerHandler accelerometerHandler;
     String filename = "calibration.conf";
 
-    public MyCalibrationManager(TextView textView, Context context) {
-        this.textView = textView;
+    public MyCalibrationManager(Context context) {
         this.context = context;
     }
 
@@ -58,10 +55,6 @@ public class MyCalibrationManager {
         int size = measures.size();
 
         return new AccelerometerMeasure(0, varx / size, vary / size, varz / size);
-    }
-
-    public void start() {
-
     }
 
     public void save() {

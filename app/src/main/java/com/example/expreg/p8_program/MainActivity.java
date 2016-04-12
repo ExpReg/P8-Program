@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements
     protected Button deleteButton = null;
     protected Button startTripButton = null;
     protected Button stopTripButton = null;
+    protected Button startCalibrationButton = null;
+    protected Button stopCalibrationButton = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +78,11 @@ public class MainActivity extends AppCompatActivity implements
         deleteButton = (Button) findViewById(R.id.deleteButton);
         startTripButton = (Button) findViewById(R.id.startTripButton);
         stopTripButton = (Button) findViewById(R.id.stopTripButton);
+        startCalibrationButton = (Button) findViewById(R.id.startCalibrationButton);
+        stopCalibrationButton = (Button) findViewById(R.id.stopCalibrationButton);
+
         stopTripButton.setEnabled(false);
+        stopCalibrationButton.setEnabled(false);
 
         // Creates the sensor handlers
         //mLocationHandler = new MyLocationHandler(mGoogleApiClient, mLocationTextView, this);
@@ -180,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements
         int frequency = Integer.parseInt(mFreqChange.getText().toString());
         mAccelerometerHandler.start(frequency);
         startTripButton.setEnabled(false);
+        startCalibrationButton.setEnabled(false);
         stopTripButton.setEnabled(true);
         exportButton.setEnabled(false);
         deleteButton.setEnabled(false);
@@ -188,7 +195,27 @@ public class MainActivity extends AppCompatActivity implements
     public void stopTrip(View view) {
         mAccelerometerHandler.stop();
         startTripButton.setEnabled(true);
+        startCalibrationButton.setEnabled(true);
         stopTripButton.setEnabled(false);
+        exportButton.setEnabled(true);
+        deleteButton.setEnabled(true);
+    }
+
+    public void startCalibration(View view) {
+        int frequency = Integer.parseInt(mFreqChange.getText().toString());
+        mAccelerometerHandler.start(frequency, true);
+        startTripButton.setEnabled(false);
+        startCalibrationButton.setEnabled(false);
+        stopCalibrationButton.setEnabled(true);
+        exportButton.setEnabled(false);
+        deleteButton.setEnabled(false);
+    }
+
+    public void stopCalibration(View view) {
+        mAccelerometerHandler.stop();
+        startTripButton.setEnabled(true);
+        startCalibrationButton.setEnabled(true);
+        stopCalibrationButton.setEnabled(false);
         exportButton.setEnabled(true);
         deleteButton.setEnabled(true);
     }

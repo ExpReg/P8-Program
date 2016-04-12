@@ -58,7 +58,7 @@
         android:layout_below="@+id/freq_message"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="20dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -69,7 +69,29 @@
         android:layout_below="@+id/startTripButton"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="20dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Calibration"
+        android:onClick="startCalibration"
+        android:id="@+id/startCalibrationButton"
+        android:layout_below="@+id/stopTripButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop Calibration"
+        android:onClick="stopCalibration"
+        android:id="@+id/stopCalibrationButton"
+        android:layout_below="@+id/startCalibrationButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -77,10 +99,10 @@
         android:text="Export"
         android:onClick="export"
         android:id="@+id/exportButton"
-        android:layout_below="@+id/stopTripButton"
+        android:layout_below="@+id/stopCalibrationButton"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="20dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -91,6 +113,6 @@
         android:layout_below="@+id/exportButton"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="20dp" />
 
 </RelativeLayout>

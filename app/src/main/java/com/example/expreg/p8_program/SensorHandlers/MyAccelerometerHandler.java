@@ -37,34 +37,30 @@ public class MyAccelerometerHandler extends MySensorHandler {
         if(this.mFrequency == 100) {
             myList.add(result);
         }
-        else {
-            if (mDb != null) {
-                mDb.addMeasure(result);
-                if (result.getAcc_y() > mCutoffAccel) {
-                    mDb.addDetection(result, "Acceleration");
-                } else if (result.getAcc_y() < mCutoffBrake) {
-                    mDb.addDetection(result, "Brake");
-                }
+        else if (mDb != null && !mCalibrate) {
+            mDb.addMeasure(result);
+            if (result.getAcc_y() > mCutoffAccel) {
+                mDb.addDetection(result, "Acceleration");
+            } else if (result.getAcc_y() < mCutoffBrake) {
+                mDb.addDetection(result, "Brake");
             }
-
-            mCalibrationManager.add(result);
-
-            float avgy = 0;
-            if (mCalibrationManager.size() >= 200)
-               avgy = mCalibrationManager.calcAverage().getAcc_y();
-
-            if (avgy > mCutoffAccel || avgy < mCutoffBrake) {
-                mColorBox.setBackgroundColor(0xFFFF0000);
-            }
-            else {
-                mColorBox.setBackgroundColor(0xFF00FF00);
-            }
-
-            String strx = "Accelerometer x-axis: " + event.values[0] + "\n";
-            String stry = "Accelerometer y-axis: " + event.values[1] + "\n";
-            String strz = "Accelerometer z-axis: " + event.values[2];
-            mSensorTextView.setText(strx + stry + strz);
         }
+
+        float avgy = 0;
+        if (mCalibrationManager.size() >= 200)
+            avgy = mCalibrationManager.calcAverage().getAcc_y();
+
+        if (avgy > mCutoffAccel || avgy < mCutoffBrake) {
+            mColorBox.setBackgroundColor(0xFFFF0000);
+        }
+        else {
+            mColorBox.setBackgroundColor(0xFF00FF00);
+        }
+
+        String strx = "Accelerometer x-axis: " + event.values[0] + "\n";
+        String stry = "Accelerometer y-axis: " + event.values[1] + "\n";
+        String strz = "Accelerometer z-axis: " + event.values[2];
+        mSensorTextView.setText(strx + stry + strz);
     }
 
     @Override

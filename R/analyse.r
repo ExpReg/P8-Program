@@ -57,10 +57,31 @@ OneMeter <- allTrips[c(1,2,3,4,6)]
 Meter125 <- allTrips[c(8,9,10,11,12)]
 Meter150 <- allTrips[c(13,14,15,16,17)]
 
-#btc 10042016, added logic for filtering part of dataframe and finding the falltime for a trip
-myDataFrameAllAxes <- getDataFrame(6) 
-dataFrameAllAxes300To360 <- myDataFrameAllAxes[myDataFrameAllAxes$allTrips..tripNo...allAxes < 2,]
-fallTime <- getFallTime(dataFrameAllAxes300To360$allTrips..tripNo...relativeTime) 
+#btc 14042016: get falltimes and show them in a latex table
+allTrips <- lapply(allTrips, unique)
+dataFrame <- getDataFrame(allTrips, 28)
+myFilteredDataFrames <- lapply(allTrips, selectValues)
+res <- lapply(myFilteredDataFrames, getFallTime)
+vecRes1m <- unlist(res[c(1,2,3,4,6)])
+vecRes1m[[6]] <- mean(vecRes1m)
+vecRes125m <- unlist(res[8:12])
+vecRes125m[[6]] <- mean(vecRes125m)
+vecRes15m <- unlist(res[13:17])
+vecRes15m[[6]] <- mean(vecRes15m)
+frameskk <- data.frame(vecRes1m, vecRes125m, vecRes15m)
+createTimeTable(frameskk)
+
+
+
+
+createTimeTable <- function(dataFrame){
+  addtorow <- list()
+  addtorow$pos <- list(0,0)
+  addtorow$command <- c("iteration & 1.0 m & 1.25 m & 1.5 m \\\\\n", "& (n = 10) & (n = 10) & (n = 10) \\\\\n")
+  print(xtable(dataFrame), add.to.row = addtorow, include.colnames = FALSE)  
+}
+
+
 
 getDataFrame<- function(tripNo){
   return(data.frame(allTrips[[tripNo]]$relativeTime,allTrips[[tripNo]]$allAxes))
@@ -70,7 +91,7 @@ getFallTime <- function(dataFrame){
   if(is.null(dataFrame))
     return("dataFrame is empty")
   else {
-    fallTime = max(dataFrame) - min(dataFrame)  
+    fallTime = max(dataFrame[,2]) - min(dataFrame[,2])  
     return(fallTime)
   }
 }

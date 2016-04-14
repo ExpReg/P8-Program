@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Creates the sensor handlers
         //mLocationHandler = new MyLocationHandler(mGoogleApiClient, mLocationTextView, this);
-        mAccelerometerHandler = new MyAccelerometerHandler(mAccelerometerTextView, this, db);
+        mAccelerometerHandler = new MyAccelerometerHandler(this, db);
         //mMagnetometerHandler = new MySensorHandler(mMagnetometerTextView, Sensor.TYPE_MAGNETIC_FIELD, this);
         //mGyroscopeHandler = new MySensorHandler(mGyroscopeTextView, Sensor.TYPE_GYROSCOPE, this);
 

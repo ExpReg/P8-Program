@@ -4,32 +4,30 @@ import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.widget.TextView;
+
 import com.example.expreg.p8_program.DB.MySQLiteHelper;
 
 public abstract class MySensorHandler implements SensorEventListener {
-    protected TextView mSensorTextView = null;
     protected SensorManager mSensorManager = null;
-    protected Sensor mSensor = null;
-    protected MySQLiteHelper mDb;
-    protected Context mContext;
-    protected int mTrip = 0;
-    protected float[] mOutput;
-    protected int frequency = 0;
-    protected boolean calibrate = false;
     protected MyCalibrationManager mCalibrationManager = null;
+    protected Sensor mSensor = null;
+    protected MySQLiteHelper mDb = null;
+    protected Context mContext = null;
+    protected float[] mOutput;
+    protected int mTrip = 0;
+    protected int mFrequency = 0;
+    protected boolean mCalibrate = false;
 
-
-    public MySensorHandler(TextView view, int sensorType, Context context) {
-        this(view, sensorType, context, null);
+    public MySensorHandler(Context context, int sensorType) {
+        this(context, null, sensorType);
     }
 
-    public MySensorHandler(TextView view, int sensorType, Context context, MySQLiteHelper db) {
-        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+    public MySensorHandler(Context context, MySQLiteHelper db, int sensorType) {
         mContext = context;
-        mSensor = mSensorManager.getDefaultSensor(sensorType);
-        mSensorTextView = view;
         mDb = db;
+        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        mCalibrationManager = new MyCalibrationManager(mContext);
+        mSensor = mSensorManager.getDefaultSensor(sensorType);
     }
 
     public void start(int frequency) {
@@ -37,11 +35,8 @@ public abstract class MySensorHandler implements SensorEventListener {
     }
 
     public void start(int frequency, boolean calibrate) {
-        this.calibrate = calibrate;
-        if (calibrate == true) {
-            mCalibrationManager = new MyCalibrationManager(mContext);
-        }
-        this.frequency = frequency;
+        this.mCalibrate = calibrate;
+        this.mFrequency = frequency;
         if (mDb != null) {
             mTrip = mDb.getLastTrip() + 1;
         }
@@ -50,10 +45,10 @@ public abstract class MySensorHandler implements SensorEventListener {
 
     public void stop() {
         mSensorManager.unregisterListener(this);
-        if (this.calibrate == true) {
+        if (this.mCalibrate == true) {
             mCalibrationManager.save();
         }
-        this.calibrate = false;
+        this.mCalibrate = false;
     }
 
     @Override

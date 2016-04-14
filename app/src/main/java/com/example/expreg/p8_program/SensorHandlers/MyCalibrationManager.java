@@ -98,6 +98,10 @@ public class MyCalibrationManager {
         return avg;
     }
 
+    public int size() {
+        return measures.size();
+    }
+
     public static AccelerometerMeasure readVariance(Context context) {
         AccelerometerMeasure var = null;
 

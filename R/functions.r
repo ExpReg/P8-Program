@@ -30,7 +30,8 @@ getTrip <- function(dbconnection,tripNr){
 
 #PlOT RELATED FUNCTIONS
 plotStuff <- function(toPlot,name,row){
-  plot(toPlot[,c(2,row)],  xlab = "Time \n s", ylab = "acceleration  m/s^2",main = name,xlim = c(0,3))
+  plot(toPlot[,c(2,row)],  xlab = "Time \n s", ylab = "acceleration  m/s^2",main = name, col = 2)
+  lines(toPlot[,c(2,row)],type = "l",col = 2)
 }
 
 plotx <- Curry(plotStuff,name = "x-axis",row = 3)
@@ -94,4 +95,13 @@ determinePastDiff <-function(data){
   pastDiff <- max(past[,2]) - min(past[,2])
   futureDiff <- max(future[,2]) - min(future[,2])
   unlist(pastDiff) 
+}
+
+
+modifyTimeLine <- function(dataFrame){
+  minFallTime <- min(selectValues(dataFrame)[,2])
+  maxFallTime <- max(selectValues(dataFrame)[,2])
+  newSet <- subset(dataFrame, relativeTime >= (minFallTime - 1) & relativeTime <= (maxFallTime + 1 ))
+  newSet[,2] <- (newSet[,2] - newSet[,2][[1]])
+  newSet
 }

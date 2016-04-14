@@ -49,70 +49,84 @@
         android:layout_below="@+id/accelerometer_text"
         android:hint="@string/freq_message" />
 
-    <Button
+    <TableLayout android:id="@+id/button_table"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Trip"
-        android:onClick="startTrip"
-        android:id="@+id/startTripButton"
-        android:layout_below="@+id/freq_message"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp" />
+        android:layout_below="@+id/freq_message">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop Trip"
-        android:onClick="stopTrip"
-        android:id="@+id/stopTripButton"
-        android:layout_below="@+id/startTripButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp" />
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start Trip"
+                android:onClick="startTrip"
+                android:layout_weight="0.5"
+                android:id="@+id/startTripButton" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start Calibration"
-        android:onClick="startCalibration"
-        android:id="@+id/startCalibrationButton"
-        android:layout_below="@+id/stopTripButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stop Trip"
+                android:onClick="stopTrip"
+                android:layout_weight="0.5"
+                android:id="@+id/stopTripButton" />
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start Calibration"
+                android:onClick="startCalibration"
+                android:layout_weight="0.5"
+                android:id="@+id/startCalibrationButton" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop Calibration"
-        android:onClick="stopCalibration"
-        android:id="@+id/stopCalibrationButton"
-        android:layout_below="@+id/startCalibrationButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stop Calibration"
+                android:onClick="stopCalibration"
+                android:layout_weight="0.5"
+                android:id="@+id/stopCalibrationButton" />
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Export"
+                android:onClick="export"
+                android:layout_weight="0.5"
+                android:id="@+id/exportButton" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Export"
-        android:onClick="export"
-        android:id="@+id/exportButton"
-        android:layout_below="@+id/stopCalibrationButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete DB"
+                android:onClick="deleteDB"
+                android:layout_weight="0.5"
+                android:id="@+id/deleteButton" />
+        </TableRow>
+    </TableLayout>
 
-    <Button
+    <SurfaceView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete DB"
-        android:onClick="deleteDB"
-        android:id="@+id/deleteButton"
-        android:layout_below="@+id/exportButton"
+        android:id="@+id/color_box"
+        android:background="#00FF00"
+        android:layout_below="@+id/button_table"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp" />
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

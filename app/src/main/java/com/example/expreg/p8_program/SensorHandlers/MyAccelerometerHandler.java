@@ -46,11 +46,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
             }
         }
 
-        float avgy = 0;
-        if (mCalibrationManager.size() >= 200)
-            avgy = mCalibrationManager.calcAverage().getAcc_y();
-
-        if (avgy > mCutoffAccel || avgy < mCutoffBrake) {
+        if (this.hardAcceleration()) {
             mColorBox.setBackgroundColor(0xFFFF0000);
         }
         else {
@@ -70,6 +66,15 @@ public class MyAccelerometerHandler extends MySensorHandler {
             for (AccelerometerMeasure r:this.myList) {
                 mDb.addMeasure(r);
             }
+            myList.clear();
         }
+    }
+
+    private boolean hardAcceleration() {
+        float avgy = 0;
+        if (mCalibrationManager.size() >= 200)
+            avgy = mCalibrationManager.calcAverage().getAcc_y();
+
+        return (avgy > mCutoffAccel || avgy < mCutoffBrake);
     }
 }

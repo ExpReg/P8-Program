@@ -30,8 +30,7 @@ getTrip <- function(dbconnection,tripNr){
 
 #PlOT RELATED FUNCTIONS
 plotStuff <- function(toPlot,name,row){
-  plot(toPlot[,c(2,row)],  xlab = "Time \n s", ylab = "acceleration  m/s^2",main = name, col = 2)
-  lines(toPlot[,c(2,row)],type = "l",col = 2)
+  plot(toPlot[,c(2,row)],  xlab = "Time \n s", ylab = "acceleration  m/s^2",main = name, col = 2 )
 }
 
 plotx <- Curry(plotStuff,name = "x-axis",row = 3)
@@ -69,12 +68,19 @@ filterDataFrame <- function(data,k){
   return(data.frame(time,filteredData))
 }
 
+filterWihtLowPass <- function(data){
+  time <- data[c(1,2)]
+  data <- data[3:6]
+  filteredData <- apply(data,2,function(x) lowPassFilter(x))
+  return(data.frame(time,filteredData))
+}
+
 getTimeAll<- function(dataFrame){
   dataFrame[c(2,6)]
 }
 
 selectValues <- function(data){
-  subset(data,allAxes < 0.5)
+  subset(data,allAxes < 0.5 & acc_y < 0.5 & acc_y > -0.1)
 }
 
 determineFutureDiff <- function(data){
@@ -104,4 +110,42 @@ modifyTimeLine <- function(dataFrame){
   newSet <- subset(dataFrame, relativeTime >= (minFallTime - 1) & relativeTime <= (maxFallTime + 1 ))
   newSet[,2] <- (newSet[,2] - newSet[,2][[1]])
   newSet
+}
+
+checkFrequency <- function(vect){
+  len <- length(vect)
+  Time <- max(vect)
+  len/Time
+}
+
+checkFrequency2 <- function(vect){
+  newVect <- vector()
+  for(i in 1:(length(vect) - 1)){
+    newVect[[i]] <- vect[[i + 1]] - vect[[i]] 
+  }
+  newVect
+}
+
+lowPassFilter <- function(data){
+  vect <- vector()
+  vect[[1]]<- data[[1]]
+  for(i in 2:length(data)){
+    vect[[i]] <- vect[[i - 1]] + (0.25 * (data[[i]] - vect[[i-1]]))
+  }
+  vect
+}
+
+plotLines <- function(data){
+  plot(data[[1]],type = "n", ylim = c(-0.1,0.2),xlim = c(0.9,1.5))
+  color <- c("black","blue","green","red","greenyellow")
+  
+  legend( x= "topright", y=0.92, 
+          legend=c("1","2", "3", "4","5"), 
+          col=c("black", "blue", "green", "red","greenyellow"),   
+          pch=15)
+  
+  for(i in 1:length(data)){
+    lines(data[[i]],col = color[[i]])
+  }
+  
 }

@@ -97,6 +97,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
 
+        this.addMeasure(sensorMeasure, db);
+
+        // 4. close
+        db.close();
+    }
+
+    public void addMeasure(AccelerometerMeasure sensorMeasure, SQLiteDatabase db) {
         // 2. create ContentValues to add key "column"/value
         ContentValues values = new ContentValues();
         values.put(KEY_TRIP, sensorMeasure.getTrip());
@@ -109,9 +116,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.insert(TABLE_SENSOR, // table
                 null, //nullColumnHack
                 values); // key/value -> keys = column names/ values = column values
+    }
 
-        // 4. close
-        db.close();
+    public void addMeasures(List<AccelerometerMeasure> measures) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        for (AccelerometerMeasure m : measures) {
+            this.addMeasure(m, db);
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 
     public void addDetection(AccelerometerMeasure sensorMeasure, String type) {

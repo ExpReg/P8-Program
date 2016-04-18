@@ -33,12 +33,11 @@ public class MyAccelerometerHandler extends MySensorHandler {
         Log.d("SensorChanged", "Sensor has changed");
         AccelerometerMeasure result = new AccelerometerMeasure(mTrip, event.values[0], event.values[1], event.values[2]);
         mCalibrationManager.add(result);
+        myList.add(result);
 
-        if(this.mFrequency == 100) {
-            myList.add(result);
-        }
-        else if (mDb != null && !mCalibrate) {
-            mDb.addMeasure(result);
+        if (myList.size() >= 200) {
+            mDb.addMeasures(myList);
+            myList.clear();
         }
 
         if (this.hardAcceleration()) {
@@ -52,17 +51,6 @@ public class MyAccelerometerHandler extends MySensorHandler {
         String stry = "Accelerometer y-axis: " + event.values[1] + "\n";
         String strz = "Accelerometer z-axis: " + event.values[2];
         mSensorTextView.setText(strx + stry + strz);
-    }
-
-    @Override
-    public void stop() {
-        super.stop();
-        if(this.mFrequency == 100 && mDb != null && !mCalibrate){
-            for (AccelerometerMeasure r:this.myList) {
-                mDb.addMeasure(r);
-            }
-            myList.clear();
-        }
     }
 
     private boolean hardAcceleration() {

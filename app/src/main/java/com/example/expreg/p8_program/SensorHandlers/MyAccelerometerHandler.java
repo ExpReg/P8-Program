@@ -39,11 +39,6 @@ public class MyAccelerometerHandler extends MySensorHandler {
         }
         else if (mDb != null && !mCalibrate) {
             mDb.addMeasure(result);
-            if (result.getAcc_y() > mCutoffAccel) {
-                mDb.addDetection(result, "Acceleration");
-            } else if (result.getAcc_y() < mCutoffBrake) {
-                mDb.addDetection(result, "Brake");
-            }
         }
 
         if (this.hardAcceleration()) {

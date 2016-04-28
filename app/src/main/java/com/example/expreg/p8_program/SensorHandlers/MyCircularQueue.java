@@ -17,11 +17,12 @@ import org.apache.commons.collections4.queue.CircularFifoQueue;
 
 public class MyCircularQueue {
     public static String filename = "calibration.conf";
-    private Queue<AccelerometerMeasure> measures = new CircularFifoQueue<>(200);
+    private Queue<AccelerometerMeasure> measures = null;
     private Context context = null;
 
-    public MyCircularQueue(Context context) {
+    public MyCircularQueue(Context context, int size) {
         this.context = context;
+        measures = new CircularFifoQueue<>(size);
     }
 
     public void add(AccelerometerMeasure measure) {

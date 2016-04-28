@@ -26,7 +26,6 @@ public abstract class MySensorHandler implements SensorEventListener {
         mContext = context;
         mDb = db;
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        mCalibrationManager = new MyCircularQueue(mContext);
         mSensor = mSensorManager.getDefaultSensor(sensorType);
     }
 
@@ -40,7 +39,8 @@ public abstract class MySensorHandler implements SensorEventListener {
         if (mDb != null) {
             mTrip = mDb.getLastTrip() + 1;
         }
-        mSensorManager.registerListener(this, mSensor, 1000000 / frequency);
+        mCalibrationManager = new MyCircularQueue(mContext, mFrequency);
+        mSensorManager.registerListener(this, mSensor, 1000000 / mFrequency);
     }
 
     public void stop() {

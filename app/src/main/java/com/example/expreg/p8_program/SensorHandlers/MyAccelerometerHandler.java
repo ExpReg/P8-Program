@@ -54,10 +54,10 @@ public class MyAccelerometerHandler extends MySensorHandler {
     }
 
     private boolean hardAcceleration() {
-        float avgy = 0;
-        if (mCalibrationManager.size() >= 200)
-            avgy = mCalibrationManager.calcAverage().getAcc_y();
+        float diffy = 0;
+        if (mCalibrationManager.size() >= mFrequency)
+            diffy = mCalibrationManager.getMax().getAcc_y() - mCalibrationManager.getMin().getAcc_y();
 
-        return (avgy > mCutoffAccel || avgy < mCutoffBrake);
+        return (diffy > mCutoffAccel || diffy < mCutoffBrake);
     }
 }

@@ -65,4 +65,10 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
         return (diffy > mCutoffAccel || diffy < mCutoffBrake);
     }
+
+    @Override
+    public void stop() {
+        super.stop();
+        mColorBox.setBackgroundColor(0xFF00FF00);
+    }
 }

@@ -21,6 +21,9 @@ public class MyAccelerometerHandler extends MySensorHandler {
     protected TextView mSensorTextView = null;
     protected SurfaceView mColorBox = null;
     protected List<AccelerometerMeasure> myList = new ArrayList<>();
+    protected long colourTimer = 0;
+    protected long redTime = 5000000000L;
+
 
     public MyAccelerometerHandler(Context context, MySQLiteHelper db) {
         super(context, db, Sensor.TYPE_ACCELEROMETER);
@@ -41,9 +44,11 @@ public class MyAccelerometerHandler extends MySensorHandler {
         }
 
         if (this.hardAcceleration()) {
+            colourTimer = System.nanoTime();
             mColorBox.setBackgroundColor(0xFFFF0000);
         }
-        else {
+        else if (System.nanoTime() - colourTimer > redTime) {
+            colourTimer = 0;
             mColorBox.setBackgroundColor(0xFF00FF00);
         }
 

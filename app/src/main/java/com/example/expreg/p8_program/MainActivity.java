@@ -2,11 +2,8 @@ package com.example.expreg.p8_program;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.hardware.Sensor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -26,7 +23,7 @@ import java.nio.channels.FileChannel;
 import com.example.expreg.p8_program.DB.MySQLiteHelper;
 import com.example.expreg.p8_program.Model.AccelerometerMeasure;
 import com.example.expreg.p8_program.SensorHandlers.MyAccelerometerHandler;
-import com.example.expreg.p8_program.SensorHandlers.MyCalibrationManager;
+import com.example.expreg.p8_program.SensorHandlers.MyCircularQueue;
 import com.example.expreg.p8_program.SensorHandlers.MySensorHandler;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -89,10 +86,10 @@ public class MainActivity extends AppCompatActivity implements
         stopCalibrationButton.setEnabled(false);
 
         // Gets the calibration stuff from file
-        File file = new File(MyCalibrationManager.filename);
+        File file = new File(MyCircularQueue.filename);
         if(file.exists()) {
-            this.calibrateAvg = MyCalibrationManager.readAverage(this);
-            this.calibrateVar = MyCalibrationManager.readVariance(this);
+            this.calibrateAvg = MyCircularQueue.readAverage(this);
+            this.calibrateVar = MyCircularQueue.readVariance(this);
         }
 
         // Creates the sensor handlers
@@ -229,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements
         stopCalibrationButton.setEnabled(false);
         exportButton.setEnabled(true);
         deleteButton.setEnabled(true);
-        this.calibrateAvg = MyCalibrationManager.readAverage(this);
-        this.calibrateVar = MyCalibrationManager.readVariance(this);
+        this.calibrateAvg = MyCircularQueue.readAverage(this);
+        this.calibrateVar = MyCircularQueue.readVariance(this);
     }
 }

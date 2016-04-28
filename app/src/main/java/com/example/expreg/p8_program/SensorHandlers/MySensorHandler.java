@@ -9,7 +9,7 @@ import com.example.expreg.p8_program.DB.MySQLiteHelper;
 
 public abstract class MySensorHandler implements SensorEventListener {
     protected SensorManager mSensorManager = null;
-    protected MyCalibrationManager mCalibrationManager = null;
+    protected MyCircularQueue mCalibrationManager = null;
     protected Sensor mSensor = null;
     protected MySQLiteHelper mDb = null;
     protected Context mContext = null;
@@ -26,7 +26,7 @@ public abstract class MySensorHandler implements SensorEventListener {
         mContext = context;
         mDb = db;
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        mCalibrationManager = new MyCalibrationManager(mContext);
+        mCalibrationManager = new MyCircularQueue(mContext);
         mSensor = mSensorManager.getDefaultSensor(sensorType);
     }
 

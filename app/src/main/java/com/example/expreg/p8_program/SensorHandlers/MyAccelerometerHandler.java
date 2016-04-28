@@ -35,7 +35,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
         mCalibrationManager.add(result);
         myList.add(result);
 
-        if (myList.size() >= 200) {
+        if (myList.size() >= 200 && !this.mCalibrate) {
             mDb.addMeasures(myList);
             myList.clear();
         }

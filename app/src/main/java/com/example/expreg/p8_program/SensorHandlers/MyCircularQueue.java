@@ -15,12 +15,12 @@ import java.io.FileWriter;
 import java.util.Queue;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 
-public class MyCalibrationManager {
+public class MyCircularQueue {
     private Queue<AccelerometerMeasure> measures = new CircularFifoQueue<>(200);
     private Context context = null;
     public static String filename = "calibration.conf";
 
-    public MyCalibrationManager(Context context) {
+    public MyCircularQueue(Context context) {
         this.context = context;
     }
 

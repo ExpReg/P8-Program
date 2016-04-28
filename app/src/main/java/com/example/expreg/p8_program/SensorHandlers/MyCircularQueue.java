@@ -16,9 +16,9 @@ import java.util.Queue;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 
 public class MyCircularQueue {
+    public static String filename = "calibration.conf";
     private Queue<AccelerometerMeasure> measures = new CircularFifoQueue<>(200);
     private Context context = null;
-    public static String filename = "calibration.conf";
 
     public MyCircularQueue(Context context) {
         this.context = context;
@@ -26,6 +26,26 @@ public class MyCircularQueue {
 
     public void add(AccelerometerMeasure measure) {
         measures.add(measure);
+    }
+
+    public AccelerometerMeasure getMin() {
+        AccelerometerMeasure min = new AccelerometerMeasure(0, Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
+        for (AccelerometerMeasure m : measures) {
+            if (m.getAcc_y() < min.getAcc_y()) {
+                min = m;
+            }
+        }
+        return min;
+    }
+
+    public AccelerometerMeasure getMax() {
+        AccelerometerMeasure max = new AccelerometerMeasure(0, Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
+        for (AccelerometerMeasure m : measures) {
+            if (m.getAcc_y() > max.getAcc_y()) {
+                max = m;
+            }
+        }
+        return max;
     }
 
     public AccelerometerMeasure calcAverage() {

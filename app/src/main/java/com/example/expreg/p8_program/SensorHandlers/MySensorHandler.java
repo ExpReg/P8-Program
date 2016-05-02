@@ -6,9 +6,11 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import com.example.expreg.p8_program.DB.MySQLiteHelper;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 public abstract class MySensorHandler implements SensorEventListener {
     protected SensorManager mSensorManager = null;
+    protected GoogleApiClient mGoogleApiClient = null;
     protected MyCircularQueue mCalibrationManager = null;
     protected Sensor mSensor = null;
     protected MySQLiteHelper mDb = null;
@@ -23,10 +25,15 @@ public abstract class MySensorHandler implements SensorEventListener {
     }
 
     public MySensorHandler(Context context, MySQLiteHelper db, int sensorType) {
+        this(context, db, sensorType, null);
+    }
+
+    public MySensorHandler(Context context, MySQLiteHelper db, int sensorType, GoogleApiClient client) {
         mContext = context;
         mDb = db;
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(sensorType);
+        mGoogleApiClient = client;
     }
 
     public void start(int frequency) {

@@ -1,9 +1,13 @@
 package com.example.expreg.p8_program.SensorHandlers;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.location.Location;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.widget.TextView;
@@ -11,6 +15,8 @@ import android.widget.TextView;
 import com.example.expreg.p8_program.DB.MySQLiteHelper;
 import com.example.expreg.p8_program.Model.AccelerometerMeasure;
 import com.example.expreg.p8_program.R;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +29,16 @@ public class MyAccelerometerHandler extends MySensorHandler {
     protected List<AccelerometerMeasure> myList = new ArrayList<>();
     protected long colourTimer = 0;
     protected long redTime = 5000000000L;
+    protected boolean accelerating = false;
+    protected Location lastKnownLocation = null;
 
 
     public MyAccelerometerHandler(Context context, MySQLiteHelper db) {
-        super(context, db, Sensor.TYPE_ACCELEROMETER);
+        this(context, db, null);
+    }
+
+    public MyAccelerometerHandler(Context context, MySQLiteHelper db, GoogleApiClient client) {
+        super(context, db, Sensor.TYPE_ACCELEROMETER, client);
         mSensorTextView = (TextView) ((Activity)context).findViewById(R.id.accelerometer_text);
         mColorBox = (SurfaceView) ((Activity)context).findViewById(R.id.color_box);
     }
@@ -46,8 +58,19 @@ public class MyAccelerometerHandler extends MySensorHandler {
         if (this.hardAcceleration()) {
             colourTimer = System.nanoTime();
             mColorBox.setBackgroundColor(0xFFFF0000);
+            if (!accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
+                accelerating = true;
+                lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                // TODO: Add to database as start of a hard acceleration
+            }
         }
-        else if (System.nanoTime() - colourTimer > redTime) {
+        else if (accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
+            accelerating = false;
+            lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            // TODO: Add to database as end of hard acceleration
+        }
+
+        if (System.nanoTime() - colourTimer > redTime) {
             colourTimer = 0;
             mColorBox.setBackgroundColor(0xFF00FF00);
         }

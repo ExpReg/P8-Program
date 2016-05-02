@@ -26,13 +26,15 @@ import com.example.expreg.p8_program.SensorHandlers.MyAccelerometerHandler;
 import com.example.expreg.p8_program.SensorHandlers.MyCircularQueue;
 import com.example.expreg.p8_program.SensorHandlers.MySensorHandler;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationServices;
 
 public class MainActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener {
 
-    //protected GoogleApiClient mGoogleApiClient = null;
+    protected GoogleApiClient mGoogleApiClient = null;
     MySQLiteHelper db = null;
     AccelerometerMeasure calibrateAvg = null;
     AccelerometerMeasure calibrateVar = null;
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //buildGoogleApiClient();
+        buildGoogleApiClient();
 
         db = new MySQLiteHelper(this);
 
@@ -103,19 +105,19 @@ public class MainActivity extends AppCompatActivity implements
         //List<SensorMeasure> measures = db.getAllMeasures();
     }
 
-    /*protected synchronized void buildGoogleApiClient() {
+    protected synchronized void buildGoogleApiClient() {
         Log.i("MainActivity", "Building GoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-    }*/
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
-        //mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -125,9 +127,9 @@ public class MainActivity extends AppCompatActivity implements
         mAccelerometerHandler.stop();
         //mMagnetometerHandler.stop();
         //mGyroscopeHandler.stop();
-        /*if (mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
-        }*/
+        }
     }
 
     // onPause
@@ -144,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements
         // The connection to Google Play services was lost for some reason. We call connect() to
         // attempt to re-establish the connection.
         Log.i("MainActivity", "Connection suspended");
-        //mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
     }
 
     @Override

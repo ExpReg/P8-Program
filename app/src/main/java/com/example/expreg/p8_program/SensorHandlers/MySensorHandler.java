@@ -48,6 +48,8 @@ public abstract class MySensorHandler implements SensorEventListener {
         }
         mCalibrationManager = new MyCircularQueue(mContext, mFrequency);
         mSensorManager.registerListener(this, mSensor, 1000000 / mFrequency);
+        mSensorManager.registerListener(this,mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE),1000000 / mFrequency );
+        mSensorManager.registerListener(this,mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),1000000 / mFrequency );
     }
 
     public void stop() {

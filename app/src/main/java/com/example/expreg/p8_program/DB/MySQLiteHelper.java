@@ -196,7 +196,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         String query = "SELECT  * FROM " + TABLE_SENSOR;
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(query, null);        
+        Cursor cursor = db.rawQuery(query, null);
         AccelerometerMeasure sensorMeasure;
 
         if (cursor.moveToFirst()) {
@@ -211,10 +211,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
                 measures.add(sensorMeasure);
             } while (cursor.moveToNext());
-
-            cursor.close();
         }
 
+        cursor.close();
         Log.d("getAllMeasures()", measures.toString());
 
         return measures;
@@ -222,24 +221,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // Updates
     public int updateMeasure(AccelerometerMeasure sensorMeasure) {
-        // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
 
-        // 2. create ContentValues to add key "column"/value
         ContentValues values = new ContentValues();
         values.put("trip", sensorMeasure.getTrip());
         values.put("acc_x", sensorMeasure.getAcc_x());
         values.put("acc_y", sensorMeasure.getAcc_y());
         values.put("acc_z", sensorMeasure.getAcc_z());
-        //values.put("created_at", sensorMeasure.getDateTime());
+        values.put("created_at", sensorMeasure.getDateTime());
 
-        // 3. updating row
-        int i = db.update(TABLE_SENSOR, //table
-                values, // column/value
-                KEY_ID+" = ?", // selections
-                new String[] { String.valueOf(sensorMeasure.getId()) }); //selection args
-
-        // 4. close
+        int i = db.update(TABLE_SENSOR, values, KEY_ID+" = ?", new String[] { String.valueOf(sensorMeasure.getId()) });
         db.close();
 
         return i;
@@ -247,19 +238,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // Deletions
     public void deleteMeasure(SensorMeasure sensorMeasure) {
-
-        // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
 
-        // 2. delete
-        db.delete(TABLE_SENSOR,
-                KEY_ID + " = ?",
-                new String[]{ String.valueOf(sensorMeasure.getId()) });
-
-        // 3. close
+        db.delete(TABLE_SENSOR, KEY_ID + " = ?", new String[]{ String.valueOf(sensorMeasure.getId()) });
         db.close();
 
         Log.d("deleteMeasure", sensorMeasure.toString());
-
     }
 }

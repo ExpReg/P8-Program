@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
 import android.util.Log;
 
 import com.example.expreg.p8_program.Model.AccelerometerMeasure;
@@ -43,9 +44,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "trip INTEGER, " +
                 "type TEXT, " +
-                "acc_x REAL, " +
-                "acc_y REAL," +
-                "acc_z REAL," +
+                "lat REAL, " +
+                "lon REAL," +
                 "created_at TEXT)";
 
         // create detection table
@@ -88,23 +88,23 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_ACC_Y = "acc_y";
     private static final String KEY_ACC_Z = "acc_z";
     private static final String KEY_CREATED_AT = "created_at";
+    private static final String KEY_LAT = "lat";
+    private static final String KEY_LON = "lon";
 
     private static final String[] SENSOR_COLUMNS = {KEY_ID,KEY_TRIP,KEY_ACC_X,KEY_ACC_Y,KEY_ACC_Z,KEY_CREATED_AT};
-    private static final String[] DETECTION_COLUMNS = {KEY_ID,KEY_TRIP,KEY_TYPE,KEY_ACC_X,KEY_ACC_Y,KEY_ACC_Z,KEY_CREATED_AT};
+    private static final String[] DETECTION_COLUMNS = {KEY_ID,KEY_TRIP,KEY_TYPE,KEY_LAT,KEY_LON,KEY_CREATED_AT};
 
+
+    // Insertions
     public void addMeasure(AccelerometerMeasure sensorMeasure){
-        Log.d("addMeasure", sensorMeasure.toString());
-        // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
-
         this.addMeasure(sensorMeasure, db);
-
-        // 4. close
         db.close();
     }
 
     public void addMeasure(AccelerometerMeasure sensorMeasure, SQLiteDatabase db) {
-        // 2. create ContentValues to add key "column"/value
+        Log.d("addMeasure", sensorMeasure.toString());
+
         ContentValues values = new ContentValues();
         values.put(KEY_TRIP, sensorMeasure.getTrip());
         values.put(KEY_ACC_X, sensorMeasure.getAcc_x());
@@ -112,10 +112,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_ACC_Z, sensorMeasure.getAcc_z());
         values.put(KEY_CREATED_AT, sensorMeasure.getDateTime());
 
-        // 3. insert
-        db.insert(TABLE_SENSOR, // table
-                null, //nullColumnHack
-                values); // key/value -> keys = column names/ values = column values
+        db.insert(TABLE_SENSOR, null, values);
     }
 
     public void addMeasures(List<AccelerometerMeasure> measures) {
@@ -128,35 +125,43 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.endTransaction();
     }
 
-    public void addDetection(AccelerometerMeasure sensorMeasure, String type) {
-        Log.d("addDetection", type + " " + sensorMeasure.toString());
-        // 1. get reference to writable DB
+    public void addDetection(int trip, Location loc, String type, String time) {
+        Log.d("addDetection", type + " " + loc.toString());
+
         SQLiteDatabase db = this.getWritableDatabase();
 
-        // 2. create ContentValues to add key "column"/value
         ContentValues values = new ContentValues();
-        values.put(KEY_TRIP, sensorMeasure.getTrip());
+        values.put(KEY_TRIP, trip);
         values.put(KEY_TYPE, type);
-        values.put(KEY_ACC_X, sensorMeasure.getAcc_x());
-        values.put(KEY_ACC_Y, sensorMeasure.getAcc_y());
-        values.put(KEY_ACC_Z, sensorMeasure.getAcc_z());
-        values.put(KEY_CREATED_AT, sensorMeasure.getDateTime());
+        values.put(KEY_LAT, loc.getLatitude());
+        values.put(KEY_LON, loc.getLongitude());
+        values.put(KEY_CREATED_AT, time);
 
-        // 3. insert
-        db.insert(TABLE_DETECTION, // table
-                null, //nullColumnHack
-                values); // key/value -> keys = column names/ values = column values
+        db.insert(TABLE_DETECTION, null, values);
 
-        // 4. close
         db.close();
     }
 
-    public AccelerometerMeasure getMeasure(int id){
+    // Extractions
+    public int getLastTrip() {
+        int lastTrip = 0;
 
-        // 1. get reference to readable DB
+        String query = "SELECT MAX(trip) FROM " + TABLE_SENSOR;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+            lastTrip = cursor.getInt(0);
+            cursor.close();
+        }
+
+        return lastTrip;
+    }
+
+    public AccelerometerMeasure getMeasure(int id){
         SQLiteDatabase db = this.getReadableDatabase();
 
-        // 2. build query
         Cursor cursor =
                 db.query(TABLE_SENSOR, // a. table
                         SENSOR_COLUMNS, // b. column names
@@ -167,54 +172,33 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                         null, // g. order by
                         null); // h. limit
 
-        // 3. if we got results get the first one
-        if (cursor != null)
+        AccelerometerMeasure sensorMeasure = new AccelerometerMeasure();
+        if (cursor != null) {
             cursor.moveToFirst();
 
-        // 4. build measure object
-        AccelerometerMeasure sensorMeasure = new AccelerometerMeasure();
-        sensorMeasure.setId(Integer.parseInt(cursor.getString(0)));
-        sensorMeasure.setTrip(cursor.getInt(1));
-        sensorMeasure.setAcc_x(cursor.getFloat(2));
-        sensorMeasure.setAcc_y(cursor.getFloat(3));
-        sensorMeasure.setAcc_z(cursor.getFloat(4));
-        sensorMeasure.setCreatedAtFromDB(cursor.getString(5));
+            sensorMeasure.setId(Integer.parseInt(cursor.getString(0)));
+            sensorMeasure.setTrip(cursor.getInt(1));
+            sensorMeasure.setAcc_x(cursor.getFloat(2));
+            sensorMeasure.setAcc_y(cursor.getFloat(3));
+            sensorMeasure.setAcc_z(cursor.getFloat(4));
+            sensorMeasure.setCreatedAtFromDB(cursor.getString(5));
+
+            cursor.close();
+        }
 
         Log.d("getMeasure(" + id + ")", sensorMeasure.toString());
 
-        // 5. return measures
         return sensorMeasure;
     }
 
-    // Get latest trip
-    public int getLastTrip() {
-        int lastTrip = 0;
-
-        String query = "SELECT MAX(trip) FROM " + TABLE_SENSOR;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        lastTrip = cursor.getInt(0);
-
-        return lastTrip;
-    }
-
-    // Get All Measures
     public List<AccelerometerMeasure> getAllMeasures() {
-        List<AccelerometerMeasure> sensors = new LinkedList<AccelerometerMeasure>();
-
-        // 1. build the query
+        List<AccelerometerMeasure> measures = new LinkedList<>();
         String query = "SELECT  * FROM " + TABLE_SENSOR;
 
-        // 2. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = db.rawQuery(query, null);        
+        AccelerometerMeasure sensorMeasure;
 
-        // 3. go over each row, build book and add it to list
-        AccelerometerMeasure sensorMeasure = null;
         if (cursor.moveToFirst()) {
             do {
                 sensorMeasure = new AccelerometerMeasure();
@@ -224,20 +208,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 sensorMeasure.setAcc_y(cursor.getFloat(3));
                 sensorMeasure.setAcc_z(cursor.getFloat(4));
                 sensorMeasure.setCreatedAtFromDB(cursor.getString(5));
-                // Add measure to measures
-                sensors.add(sensorMeasure);
+
+                measures.add(sensorMeasure);
             } while (cursor.moveToNext());
+
+            cursor.close();
         }
 
-        Log.d("getAllMeasures()", sensors.toString());
+        Log.d("getAllMeasures()", measures.toString());
 
-        // return measures
-        return sensors;
+        return measures;
     }
 
-    // Updating single measure
+    // Updates
     public int updateMeasure(AccelerometerMeasure sensorMeasure) {
-
         // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -259,10 +243,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close();
 
         return i;
-
     }
 
-    // Deleting single measure
+    // Deletions
     public void deleteMeasure(SensorMeasure sensorMeasure) {
 
         // 1. get reference to writable DB

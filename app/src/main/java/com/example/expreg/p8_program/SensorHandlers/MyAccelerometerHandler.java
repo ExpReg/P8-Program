@@ -46,7 +46,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
     protected float[] accOrientation = null;
     protected float[] gyroOrientation = new float[3];
     protected float[] fusedOrientation = new float[9];
-    protected float alpha = 0.7f;
+    protected float alpha = 0.95f;
 
     //Taken from the ANDROID TURTORIAL http://developer.android.com/guide/topics/sensors/sensors_motion.html#sensors-motion-gyro
     private static final float NS2S = 1.0f / 1000000000.0f;
@@ -56,7 +56,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
     protected String strx = "";
     protected String stry = "";
     protected String strz = "";
-
+    protected  int test = 1;
 
     public MyAccelerometerHandler(Context context, MySQLiteHelper db) {
         this(context, db, null);
@@ -97,8 +97,6 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
         if(timestamp == 0){
             System.arraycopy(accRotationmatrix,0,gyroRotation,0,9);
-            float[] hater = getRotationMatrixFromOrientation(accOrientation);
-
         }
         if (timestamp != 0) {
             final float dT = (event.timestamp - timestamp) * NS2S;
@@ -142,7 +140,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
         float[] result = new float[9];
         for(int i = 0; i < 9; i++){
-            result[i] = A[(i/3)]*B[(i % 3)] + A[(i/3) + 1]*B[(i % 3) + 3] + A[(i/3) + 2]*B[(i % 3) + 6];
+            result[i] = A[(i/3) * 3]*B[(i % 3)] + A[((i/3) * 3) + 1]*B[(i % 3) + 3] + A[((i/3) * 3) + 2]*B[(i % 3) + 6];
         }
         return result;
     }
@@ -192,15 +190,15 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
     public void start(int frequency){
         super.start(frequency);
-        //timer = new Timer();
-        //timer.scheduleAtFixedRate(new SensorFusion(),1000,time);
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new SensorFusion(),1000,time);
     }
 
     @Override
     public void stop() {
         super.stop();
-        //timer.cancel();
-        //timer.purge();
+        timer.cancel();
+        timer.purge();
         mColorBox.setBackgroundColor(0xFF00FF00);
     }
 
@@ -213,10 +211,9 @@ public class MyAccelerometerHandler extends MySensorHandler {
             fusedOrientation[2] = alpha * gyroOrientation[2] + oneMinusAlpha * accOrientation[2];
 
             gyroRotation = getRotationMatrixFromOrientation(fusedOrientation);
-            System.arraycopy(fusedOrientation,0,gyroOrientation,0,9);
-
+            System.arraycopy(fusedOrientation,0,gyroOrientation,0,3);
             Log.d("SensorChanged", "Sensor has changed");
-            AccelerometerMeasure result = new AccelerometerMeasure(mTrip, acceleration[0],acceleration[1],acceleration[2]);
+            AccelerometerMeasure result = new AccelerometerMeasure(mTrip, acceleration[1],acceleration[1],acceleration[1] - (gyroRotation[7] * 9.81f));
             mCalibrationManager.add(result);
             myList.add(result);
 
@@ -224,7 +221,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
                 mDb.addMeasures(myList);
                 myList.clear();
             }
-
+/*
             if (hardAcceleration()) {
                 colourTimer = System.nanoTime();
                 mColorBox.setBackgroundColor(0xFFFF0000);
@@ -244,8 +241,8 @@ public class MyAccelerometerHandler extends MySensorHandler {
                 colourTimer = 0;
                 mColorBox.setBackgroundColor(0xFF00FF00);
             }
-
-             strx = "Accelerometer x-axis: " +  acceleration[0] + "\n";
+*/
+             strx = "Accelerometer x-axis: " +  (acceleration[1] - (gyroRotation[7] * 9.81f)) + "\n";
              stry = "Accelerometer y-axis: " +  acceleration[1] + "\n";
              strz = "Accelerometer z-axis: " +  acceleration[2];
 

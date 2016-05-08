@@ -24,7 +24,7 @@ public class MyCircularQueue {
         this.context = context;
         measures = new CircularFifoQueue<>(size);
     }
-
+/*
     public void add(AccelerometerMeasure measure) {
         measures.add(measure);
     }
@@ -48,6 +48,7 @@ public class MyCircularQueue {
         }
         return max;
     }
+
 
     public AccelerometerMeasure calcAverage() {
         float avgx = 0, avgy = 0, avgz = 0;
@@ -147,4 +148,5 @@ public class MyCircularQueue {
 
         return var;
     }
+    */
 }

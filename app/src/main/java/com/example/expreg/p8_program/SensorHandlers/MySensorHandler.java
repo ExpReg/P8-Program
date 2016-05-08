@@ -55,7 +55,7 @@ public abstract class MySensorHandler implements SensorEventListener {
     public void stop() {
         mSensorManager.unregisterListener(this);
         if (this.mCalibrate == true) {
-            mCalibrationManager.save();
+           //mCalibrationManager.save();
         }
         this.mCalibrate = false;
     }

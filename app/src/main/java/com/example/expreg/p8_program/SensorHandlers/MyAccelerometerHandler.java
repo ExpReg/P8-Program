@@ -36,6 +36,10 @@ public class MyAccelerometerHandler extends MySensorHandler {
     protected Location lastKnownLocation = null;
     private Timer timer = new Timer();
     public static int time = 40;
+    float[] alphas = new float[]{0.95f,0.96f,0.97f,0.98f,0.99f};
+    List<float[]> fusedOrientations = new ArrayList<>();
+    List<float[]> gyroRotations = new ArrayList<>();
+    List<float[]> gyroOrientations = new ArrayList<>();
 
     //Sensor variables
     protected float[] magnetic = new float[3];
@@ -67,6 +71,15 @@ public class MyAccelerometerHandler extends MySensorHandler {
         super(context, db, Sensor.TYPE_ACCELEROMETER, client);
         mSensorTextView = (TextView) ((Activity)context).findViewById(R.id.accelerometer_text);
         mColorBox = (SurfaceView) ((Activity)context).findViewById(R.id.color_box);
+        initer();
+    }
+
+    private void initer(){
+    for(int i = 0; i < 5; i++){
+        gyroRotations.add(new float[9]);
+        gyroOrientations.add(new float[3]);
+        fusedOrientations.add(new float[3]);
+    }
     }
 
     @Override
@@ -99,7 +112,9 @@ public class MyAccelerometerHandler extends MySensorHandler {
             return;
 
         if(timestamp == 0){
-            System.arraycopy(accRotationmatrix,0,gyroRotation,0,9);
+            for(int i = 0; i < 5;i++) {
+                System.arraycopy(accRotationmatrix, 0, gyroRotations.get(i), 0, 9);
+            }
         }
         if (timestamp != 0) {
             final float dT = (event.timestamp - timestamp) * NS2S;
@@ -135,8 +150,10 @@ public class MyAccelerometerHandler extends MySensorHandler {
         timestamp = event.timestamp;
         float[] deltaRotationMatrix = new float[9];
         SensorManager.getRotationMatrixFromVector(deltaRotationMatrix, deltaRotationVector);
-        gyroRotation = matrixMultiplication(gyroRotation,deltaRotationMatrix);
-        SensorManager.getOrientation(gyroRotation, gyroOrientation);
+        for(int i = 0 ; i < 5 ;i++){
+            gyroRotations.set(i,matrixMultiplication(gyroRotations.get(i),deltaRotationMatrix));
+            SensorManager.getOrientation(gyroRotations.get(i),gyroOrientations.get(i));
+        }
     }
 
     private float[] matrixMultiplication(float[] A, float[] B ){
@@ -182,7 +199,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
         return resultMatrix;
     }
 
-
+/*
     private boolean hardAcceleration() {
         float diffy = 0;
         if (mCalibrationManager.size() >= mFrequency)
@@ -190,6 +207,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
         return (diffy > mCutoffAccel || diffy < mCutoffBrake);
     }
+    */
 
     public void start(int frequency){
         super.start(frequency);
@@ -209,29 +227,36 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
     class SensorFusion extends TimerTask{
         public void run(){
-            float oneMinusAlpha = 1f - alpha;
 
 
             if(init){
-                fusedOrientation[0] = accOrientation[0];
-                fusedOrientation[1] = accOrientation[1];
-                fusedOrientation[2] = accOrientation[2];
-                gyroRotation = getRotationMatrixFromOrientation(fusedOrientation);
-                System.arraycopy(fusedOrientation,0,gyroOrientation,0,3);
+                for(int i = 0; i < 5; i++){
+                    fusedOrientations.set(i,new float[]{accOrientation[0],accOrientation[1],accOrientation[2]});
+                    gyroRotations.set(i,getRotationMatrixFromOrientation(fusedOrientations.get(i)));
+                    System.arraycopy(fusedOrientations.get(i), 0, gyroOrientations.get(i),0, 3);
+                }
                 init = false;
                 return;
             }
 
-            fusedOrientation[0] = alpha * gyroOrientation[0] + oneMinusAlpha * accOrientation[0];
-            fusedOrientation[1] = alpha * gyroOrientation[1] + oneMinusAlpha * accOrientation[1];
-            fusedOrientation[2] = alpha * gyroOrientation[2] + oneMinusAlpha * accOrientation[2];
+            for(int i = 0; i < 5; i++ ){
+                float oneMinusAlpha = 1f - alphas[i];
+                fusedOrientations.get(i)[0] =  alphas[i] * gyroOrientations.get(i)[0] + oneMinusAlpha * accOrientation[0];
+                fusedOrientations.get(i)[1] =  alphas[i] * gyroOrientations.get(i)[1] + oneMinusAlpha * accOrientation[1];
+                fusedOrientations.get(i)[2] =  alphas[i] * gyroOrientations.get(i)[2] + oneMinusAlpha * accOrientation[2];
+                gyroRotations.set(i,getRotationMatrixFromOrientation(fusedOrientations.get(i)));
+                System.arraycopy(fusedOrientations.get(i), 0, gyroOrientations.get(i), 0, 3);
+            }
 
-            gyroRotation = getRotationMatrixFromOrientation(fusedOrientation);
-            System.arraycopy(fusedOrientation, 0, gyroOrientation, 0, 3);
+            float[] values = new float[5];
+            for(int i  = 0; i < 5; i++){
+                values[i] = acceleration[1] - ( gyroRotations.get(i)[7] * 10f);
+            }
+
             Log.d("SensorChanged", "Sensor has changed");
 
-            AccelerometerMeasure result = new AccelerometerMeasure(mTrip, acceleration[1],acceleration[1],acceleration[1] - (gyroRotation[7] * 10.12889f));
-            mCalibrationManager.add(result);
+            AccelerometerMeasure result = new AccelerometerMeasure(mTrip, acceleration[1],values[0],values[1],values[2],values[3],values[4]);
+            //mCalibrationManager.add(result);
             myList.add(result);
 
             if (myList.size() >= 10 && !mCalibrate) {

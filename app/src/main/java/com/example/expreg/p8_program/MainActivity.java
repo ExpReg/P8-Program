@@ -88,11 +88,13 @@ public class MainActivity extends AppCompatActivity implements
         stopCalibrationButton.setEnabled(false);
 
         // Gets the calibration stuff from file
+        /*
         File file = new File(MyCircularQueue.filename);
         if(file.exists()) {
             this.calibrateAvg = MyCircularQueue.readAverage(this);
             this.calibrateVar = MyCircularQueue.readVariance(this);
         }
+        */
 
         // Creates the sensor handlers
         //mLocationHandler = new MyLocationHandler(mGoogleApiClient, mLocationTextView, this);
@@ -228,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements
         stopCalibrationButton.setEnabled(false);
         exportButton.setEnabled(true);
         deleteButton.setEnabled(true);
-        this.calibrateAvg = MyCircularQueue.readAverage(this);
-        this.calibrateVar = MyCircularQueue.readVariance(this);
+       // this.calibrateAvg = MyCircularQueue.readAverage(this);
+       // this.calibrateVar = MyCircularQueue.readVariance(this);
     }
 }

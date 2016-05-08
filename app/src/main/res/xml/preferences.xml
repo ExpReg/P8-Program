@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Need: Frequency, Export DB, Delete DB, Calibrate-->
+    <EditTextPreference
+        android:key="pref_sensorFrequency"
+        android:title="@string/pref_sensorFrequency"
+        android:dialogTitle="@string/pref_sensorFrequency"
+        android:inputType="number"
+        android:defaultValue="@string/pref_sensorFrequency_default" />
+    <!--android:summary="@string/pref_sensorFrequency_summary" -->
+    <!--
+    <Preference android:title="@string/pref_exportDB" >
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetClass="http://www.example.com" />
+    </Preference> -->
+</PreferenceScreen>

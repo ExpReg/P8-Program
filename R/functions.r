@@ -20,23 +20,24 @@ getTrip <- function(dbconnection,tripNr){
   relativeTime = round(convertedDates - convertedDates[1],digits = 3)
   
   #Handle accerlation 
-  accerlationAxes <-  dbGetQuery(dbconnection,paste("SELECT acc_x,acc_z, acc_y FROM sensor WHERE trip = ",tripNr,sep = ""))
+  accerlationAxes <-  dbGetQuery(dbconnection,paste("SELECT acc_x,acc_y,acc_z,acc_97,acc_98,acc_99 FROM sensor WHERE trip = ",tripNr,sep = ""))
   x_values <- accerlationAxes[[1]]
   y_values <- accerlationAxes[[3]]
   z_values <- accerlationAxes[[2]]
   allAxes <- sqrt(x_values^2 + y_values^2 + z_values^2)
-  return(data.frame(dates,relativeTime,accerlationAxes,allAxes))
+  return(data.frame(dates,relativeTime,accerlationAxes))
 }
 
 #PlOT RELATED FUNCTIONS
 plotStuff <- function(toPlot,name,row){
-  plot(toPlot[,c(2,row)],  xlab = "Time \n s", ylab = "acceleration  m/s^2",main = name, col = 2 )
+  plot(toPlot[,c(2,row)],  xlab = "Time \n s", ylab = "acceleration  m/s^2",main = name, col = 2,ylim = c(-5,6) )
 }
 
 plotx <- Curry(plotStuff,name = "x-axis",row = 3)
 ploty <- Curry(plotStuff,name = "y-axis",row = 5)
 plotz <- Curry(plotStuff,name = "z-axis", row = 4)
 plotAll <- Curry(plotStuff, name = "All axes",row = 6)
+plotGen <- Curry(plotStuff,name = "generic",row)
 
 plotAllInOne <- function(toPlot){
   par(mfrow = c(2,2))
@@ -147,5 +148,29 @@ plotLines <- function(data){
   for(i in 1:length(data)){
     lines(data[[i]],col = color[[i]])
   }
-  
 }
+
+myKendall <- function(data){
+  apply(data[3:length(data)],2,function(x) cor(data[,3],x,method = "kendall"))
+}
+
+getKendallCol <- function(data,numCol){
+  unlist(lapply(data, function(x) x[[numCol]]))
+}
+
+#dtw <- function(data1, data2){
+#reps <- rep(c(Inf),length(data1) + length(data2) + 2)
+#dtw <- matrix(reps,nrow = length(data1) + 1, ncol = length(data2) + 1)
+#dtw[1,1] <- 0
+#for(i in 2:length(data1)){
+#  for(j in 2:length(data2)){
+#    cost <- abs(data1[[i-1]] -  data2[[j-1]])
+#    dtw[i,j] <- cost + min(dtw[i -1 , j],
+#                           dtw[i,j-1],
+#                           dtw[i-1,j-1])
+#  }
+#}
+#return(dtw)
+#}
+
+#dtw(rep(5,5),rep(6,5))

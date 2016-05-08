@@ -16,12 +16,19 @@ import java.util.List;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
-    // Database Version
+    private static MySQLiteHelper sInstance;
+
     private static final int DATABASE_VERSION = 1;
-    // Database Name
     private static final String DATABASE_NAME = "SensorData";
 
-    public MySQLiteHelper(Context context) {
+    public static synchronized MySQLiteHelper getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new MySQLiteHelper(context.getApplicationContext());
+        }
+        return sInstance;
+    }
+
+    private MySQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -36,7 +43,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 "acc_z REAL," +
                 "created_at TEXT)";
 
-        // create sensor table
         db.execSQL(CREATE_SENSOR_TABLE);
 
         // SQL statement to create detection table
@@ -48,17 +54,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 "lon REAL," +
                 "created_at TEXT)";
 
-        // create detection table
         db.execSQL(CREATE_DETECTION_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older sensor table if existed
         db.execSQL("DROP TABLE IF EXISTS sensor");
         db.execSQL("DROP TABLE IF EXISTS detection");
 
-        // create fresh tables
         this.onCreate(db);
     }
 

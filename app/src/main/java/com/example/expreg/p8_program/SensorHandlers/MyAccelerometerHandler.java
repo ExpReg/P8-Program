@@ -59,12 +59,12 @@ public class MyAccelerometerHandler extends MySensorHandler {
     protected String strz = "";
     protected  int test = 1;
 
-    public MyAccelerometerHandler(Context context, MySQLiteHelper db) {
-        this(context, db, null);
+    public MyAccelerometerHandler(Context context) {
+        this(context, null);
     }
 
-    public MyAccelerometerHandler(Context context, MySQLiteHelper db, GoogleApiClient client) {
-        super(context, db, Sensor.TYPE_ACCELEROMETER, client);
+    public MyAccelerometerHandler(Context context, GoogleApiClient client) {
+        super(context, Sensor.TYPE_ACCELEROMETER, client);
         mSensorTextView = (TextView) ((Activity)context).findViewById(R.id.accelerometer_text);
         mColorBox = (SurfaceView) ((Activity)context).findViewById(R.id.color_box);
     }

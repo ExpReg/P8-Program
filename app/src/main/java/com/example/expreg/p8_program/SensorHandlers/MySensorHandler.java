@@ -21,16 +21,12 @@ public abstract class MySensorHandler implements SensorEventListener {
     protected boolean mCalibrate = false;
 
     public MySensorHandler(Context context, int sensorType) {
-        this(context, null, sensorType);
+        this(context, sensorType, null);
     }
 
-    public MySensorHandler(Context context, MySQLiteHelper db, int sensorType) {
-        this(context, db, sensorType, null);
-    }
-
-    public MySensorHandler(Context context, MySQLiteHelper db, int sensorType, GoogleApiClient client) {
+    public MySensorHandler(Context context, int sensorType, GoogleApiClient client) {
         mContext = context;
-        mDb = db;
+        mDb = MySQLiteHelper.getInstance(context);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(sensorType);
         mGoogleApiClient = client;

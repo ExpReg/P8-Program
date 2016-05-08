@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener {
 
     protected GoogleApiClient mGoogleApiClient = null;
-    MySQLiteHelper db = null;
     AccelerometerMeasure calibrateAvg = null;
     AccelerometerMeasure calibrateVar = null;
 
@@ -67,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements
 
         buildGoogleApiClient();
 
-        db = new MySQLiteHelper(this);
-
         // Gets the text views
         //mLocationTextView = (TextView) findViewById(R.id.location_text);
         mAccelerometerTextView = (TextView) findViewById(R.id.accelerometer_text);
@@ -96,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Creates the sensor handlers
         //mLocationHandler = new MyLocationHandler(mGoogleApiClient, mLocationTextView, this);
-        mAccelerometerHandler = new MyAccelerometerHandler(this, db);
+        mAccelerometerHandler = new MyAccelerometerHandler(this);
         //mMagnetometerHandler = new MySensorHandler(mMagnetometerTextView, Sensor.TYPE_MAGNETIC_FIELD, this);
         //mGyroscopeHandler = new MySensorHandler(mGyroscopeTextView, Sensor.TYPE_GYROSCOPE, this);
 
@@ -186,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        db.deleteDB();
+                        MySQLiteHelper.getInstance(getApplicationContext()).deleteDB();
                         Toast.makeText(MainActivity.this, "DB Deleted!", Toast.LENGTH_LONG).show();
                     }})
                 .setNegativeButton(android.R.string.no, null).show();

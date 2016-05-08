@@ -80,7 +80,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
                     accOrientation = new float[3];
                     SensorManager.getOrientation(accRotationmatrix, accOrientation);
                 }
-                mSensorTextView.setText(strx + stry + strz);
+                if (mSensorTextView != null) mSensorTextView.setText(strx + stry + strz);
                 break;
 
             case Sensor.TYPE_GYROSCOPE:
@@ -203,7 +203,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
         super.stop();
         timer.cancel();
         timer.purge();
-        mColorBox.setBackgroundColor(0xFF00FF00);
+        if (mColorBox != null) mColorBox.setBackgroundColor(0xFF00FF00);
         init = true;
     }
 

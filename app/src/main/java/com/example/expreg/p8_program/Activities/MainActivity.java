@@ -2,6 +2,7 @@ package com.example.expreg.p8_program.Activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -192,12 +193,18 @@ public class MainActivity extends AppCompatActivity implements
 
     public void startTrip(View view) {
         int frequency = Integer.parseInt(mFreqChange.getText().toString());
+        Intent myIntent = new Intent(this, StartTripActivity.class);
+        myIntent.putExtra("frequency", frequency);
+        startActivity(myIntent);
+
+        /*
         mAccelerometerHandler.start(frequency);
         startTripButton.setEnabled(false);
         startCalibrationButton.setEnabled(false);
         stopTripButton.setEnabled(true);
         exportButton.setEnabled(false);
         deleteButton.setEnabled(false);
+        */
     }
 
     public void stopTrip(View view) {

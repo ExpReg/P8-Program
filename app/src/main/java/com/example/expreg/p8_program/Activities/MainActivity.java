@@ -1,4 +1,4 @@
-package com.example.expreg.p8_program;
+package com.example.expreg.p8_program.Activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -22,6 +22,7 @@ import java.nio.channels.FileChannel;
 
 import com.example.expreg.p8_program.DB.MySQLiteHelper;
 import com.example.expreg.p8_program.Model.AccelerometerMeasure;
+import com.example.expreg.p8_program.R;
 import com.example.expreg.p8_program.SensorHandlers.MyAccelerometerHandler;
 import com.example.expreg.p8_program.SensorHandlers.MyCircularQueue;
 import com.example.expreg.p8_program.SensorHandlers.MySensorHandler;

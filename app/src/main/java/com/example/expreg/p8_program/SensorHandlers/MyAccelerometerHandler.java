@@ -35,7 +35,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
     protected boolean accelerating = false;
     protected Location lastKnownLocation = null;
     private Timer timer = new Timer();
-    public static int time = 30;
+    public static int time = 40;
 
     //Sensor variables
     protected float[] magnetic = new float[3];
@@ -46,7 +46,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
     protected float[] accOrientation = null;
     protected float[] gyroOrientation = new float[3];
     protected float[] fusedOrientation = new float[9];
-    protected float alpha = 0.96f;
+    protected float alpha = 0.97f;
     protected boolean init = true;
 
     //Taken from the ANDROID TURTORIAL http://developer.android.com/guide/topics/sensors/sensors_motion.html#sensors-motion-gyro
@@ -74,7 +74,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
         switch (event.sensor.getType()){
             case Sensor.TYPE_ACCELEROMETER:
-                System.arraycopy(event.values,0,acceleration,0,3);
+                System.arraycopy(event.values, 0, acceleration, 0, 3);
                 if(SensorManager.getRotationMatrix(accRotationmatrix,null,acceleration,magnetic)){
                     SensorManager.getRotationMatrix(accRotationmatrix,null,acceleration,magnetic);
                     accOrientation = new float[3];
@@ -82,12 +82,14 @@ public class MyAccelerometerHandler extends MySensorHandler {
                 }
                 mSensorTextView.setText(strx + stry + strz);
                 break;
+
             case Sensor.TYPE_GYROSCOPE:
                 handleGyro(event);
             break;
             case Sensor.TYPE_MAGNETIC_FIELD:
                 System.arraycopy(event.values,0,magnetic,0,3);
             break;
+
         }
     }
     // Taken FROM THE ANDROID TURTORIAL http://developer.android.com/guide/topics/sensors/sensors_motion.html#sensors-motion-gyro
@@ -133,8 +135,8 @@ public class MyAccelerometerHandler extends MySensorHandler {
         timestamp = event.timestamp;
         float[] deltaRotationMatrix = new float[9];
         SensorManager.getRotationMatrixFromVector(deltaRotationMatrix, deltaRotationVector);
-        //gyroRotation = matrixMultiplication(gyroRotation,deltaRotationMatrix);
-        SensorManager.getOrientation(deltaRotationMatrix, gyroOrientation);
+        gyroRotation = matrixMultiplication(gyroRotation,deltaRotationMatrix);
+        SensorManager.getOrientation(gyroRotation, gyroOrientation);
     }
 
     private float[] matrixMultiplication(float[] A, float[] B ){
@@ -191,6 +193,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
     public void start(int frequency){
         super.start(frequency);
+        this.myList.clear();
         timer = new Timer();
         timer.scheduleAtFixedRate(new SensorFusion(),1000,time);
     }
@@ -214,23 +217,24 @@ public class MyAccelerometerHandler extends MySensorHandler {
                 fusedOrientation[1] = accOrientation[1];
                 fusedOrientation[2] = accOrientation[2];
                 gyroRotation = getRotationMatrixFromOrientation(fusedOrientation);
-                //System.arraycopy(fusedOrientation,0,gyroOrientation,0,3);
+                System.arraycopy(fusedOrientation,0,gyroOrientation,0,3);
                 init = false;
                 return;
             }
 
-            fusedOrientation[0] = alpha * (fusedOrientation[0] + gyroOrientation[0]) + oneMinusAlpha * accOrientation[0];
-            fusedOrientation[1] = alpha * (fusedOrientation[1] + gyroOrientation[1]) + oneMinusAlpha * accOrientation[1];
-            fusedOrientation[2] = alpha * (fusedOrientation[2] + gyroOrientation[2]) + oneMinusAlpha * accOrientation[2];
+            fusedOrientation[0] = alpha * gyroOrientation[0] + oneMinusAlpha * accOrientation[0];
+            fusedOrientation[1] = alpha * gyroOrientation[1] + oneMinusAlpha * accOrientation[1];
+            fusedOrientation[2] = alpha * gyroOrientation[2] + oneMinusAlpha * accOrientation[2];
 
             gyroRotation = getRotationMatrixFromOrientation(fusedOrientation);
-           // System.arraycopy(fusedOrientation,0,gyroOrientation,0,3);
+            System.arraycopy(fusedOrientation, 0, gyroOrientation, 0, 3);
             Log.d("SensorChanged", "Sensor has changed");
-            AccelerometerMeasure result = new AccelerometerMeasure(mTrip, acceleration[1],acceleration[1],acceleration[1] - (gyroRotation[7] * 10f));
+
+            AccelerometerMeasure result = new AccelerometerMeasure(mTrip, acceleration[1],acceleration[1],acceleration[1] - (gyroRotation[7] * 10.12889f));
             mCalibrationManager.add(result);
             myList.add(result);
 
-            if (myList.size() >= 200 && !mCalibrate) {
+            if (myList.size() >= 10 && !mCalibrate) {
                 mDb.addMeasures(myList);
                 myList.clear();
             }

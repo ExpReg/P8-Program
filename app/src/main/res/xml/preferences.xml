@@ -5,9 +5,9 @@
         android:key="pref_sensorFrequency"
         android:title="@string/pref_sensorFrequency"
         android:dialogTitle="@string/pref_sensorFrequency"
+        android:summary="@string/pref_sensorFrequency_summary"
         android:inputType="number"
         android:defaultValue="@string/pref_sensorFrequency_default" />
-    <!--android:summary="@string/pref_sensorFrequency_summary" -->
     <!--
     <Preference android:title="@string/pref_exportDB" >
         <intent

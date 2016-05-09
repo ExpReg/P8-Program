@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">P8-Program</string>
     <string name="action_settings">Settings</string>
-    <string name="freq_message">Frequency</string>
     <string name="pref_sensorFrequency">Sensor Frequency</string>
     <string name="pref_sensorFrequency_default">20</string>
+    <string name="pref_sensorFrequency_summary">The frequency of the sensors</string>
     <string name="pref_exportDB">Export DB</string>
     <string name="pref_deleteDB">Delete DB</string>
 </resources>

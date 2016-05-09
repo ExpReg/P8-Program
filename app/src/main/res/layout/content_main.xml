@@ -40,7 +40,6 @@
         android:layout_below="@id/magnetometer_text"
         android:text="Gyroscope"
         android:id="@+id/gyroscope_text" />
-    -->
 
     <EditText android:id="@+id/freq_message"
         android:layout_width="wrap_content"
@@ -48,11 +47,13 @@
         android:inputType="number"
         android:layout_below="@+id/accelerometer_text"
         android:hint="@string/freq_message" />
+    -->
+
 
     <TableLayout android:id="@+id/button_table"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/freq_message">
+        android:layout_below="@+id/accelerometer_text">
 
         <TableRow
             android:layout_width="wrap_content"

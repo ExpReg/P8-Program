@@ -3,9 +3,14 @@ package com.example.expreg.p8_program.Activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -66,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         buildGoogleApiClient();
 
         // Gets the text views
@@ -73,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements
         mAccelerometerTextView = (TextView) findViewById(R.id.accelerometer_text);
         //mMagnetometerTextView = (TextView) findViewById(R.id.magnetometer_text);
         //mGyroscopeTextView = (TextView) findViewById(R.id.gyroscope_text);
-        mFreqChange = (EditText) findViewById(R.id.freq_message);
+        //mFreqChange = (EditText) findViewById(R.id.freq_message);
 
         // Gets the buttons
         exportButton = (Button) findViewById(R.id.exportButton);
@@ -102,6 +108,26 @@ public class MainActivity extends AppCompatActivity implements
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         //List<SensorMeasure> measures = db.getAllMeasures();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_settings: {
+                Intent intent = new Intent(this, MyPreferenceActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -192,19 +218,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void startTrip(View view) {
-        int frequency = Integer.parseInt(mFreqChange.getText().toString());
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        int frequency = sharedPref.getInt(getString(R.string.pref_sensorFrequency), 20);
+
         Intent myIntent = new Intent(this, StartTripActivity.class);
         myIntent.putExtra("frequency", frequency);
         startActivity(myIntent);
-
-        /*
-        mAccelerometerHandler.start(frequency);
-        startTripButton.setEnabled(false);
-        startCalibrationButton.setEnabled(false);
-        stopTripButton.setEnabled(true);
-        exportButton.setEnabled(false);
-        deleteButton.setEnabled(false);
-        */
     }
 
     public void stopTrip(View view) {
@@ -217,7 +236,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void startCalibration(View view) {
-        int frequency = Integer.parseInt(mFreqChange.getText().toString());
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        int frequency = sharedPref.getInt(getString(R.string.pref_sensorFrequency), 20);
+
         mAccelerometerHandler.start(frequency, true);
         startTripButton.setEnabled(false);
         startCalibrationButton.setEnabled(false);

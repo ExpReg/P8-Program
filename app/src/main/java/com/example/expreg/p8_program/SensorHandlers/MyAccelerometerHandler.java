@@ -186,7 +186,6 @@ public class MyAccelerometerHandler extends MySensorHandler {
     private void handleAccleration(){
         if (hardAcceleration()) {
             colourTimer = System.nanoTime();
-            mColorBox.setBackgroundColor(0xFFFF0000);
             if (!accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
                 accelerating = true;
                 lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
@@ -200,7 +199,6 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
         if (System.nanoTime() - colourTimer > redTime) {
             colourTimer = 0;
-            mColorBox.setBackgroundColor(0xFF00FF00);
         }
     }
 
@@ -258,9 +256,6 @@ public class MyAccelerometerHandler extends MySensorHandler {
                 mDb.addMeasures(myList);
                 myList.clear();
             }
-/*
-
-*/
              strx = "Accelerometer x-axis: " +  (acceleration[1] - (gyroRotation[7] * 10f)) + "\n";
              stry = "Accelerometer y-axis: " +  acceleration[1] + "\n";
              strz = "Accelerometer z-axis: " +  acceleration[2];

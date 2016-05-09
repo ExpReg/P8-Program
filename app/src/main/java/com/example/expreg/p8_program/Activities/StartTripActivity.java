@@ -1,13 +1,11 @@
 package com.example.expreg.p8_program.Activities;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.example.expreg.p8_program.Model.AccelerometerMeasure;
 import com.example.expreg.p8_program.R;
 import com.example.expreg.p8_program.SensorHandlers.MyAccelerometerHandler;
 import com.google.android.gms.common.ConnectionResult;
@@ -51,13 +49,12 @@ public class StartTripActivity extends AppCompatActivity implements
 
     // Buttons
     public void stopTrip(View view) {
-        // TODO: Find out if onStop is called after finish()
         finish();
     }
 
     // Google play services methods
     protected synchronized GoogleApiClient buildGoogleApiClient() {
-        Log.i("MainActivity", "Building GoogleApiClient");
+        Log.i("StartTripActivity", "Building GoogleApiClient");
         return new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -67,7 +64,6 @@ public class StartTripActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        //mLocationHandler.start();
     }
 
     @Override

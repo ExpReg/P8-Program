@@ -80,6 +80,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
                     accOrientation = new float[3];
                     SensorManager.getOrientation(accRotationmatrix, accOrientation);
                 }
+                handleAccleration();
                 if (mSensorTextView != null) mSensorTextView.setText(strx + stry + strz);
                 break;
 
@@ -182,6 +183,27 @@ public class MyAccelerometerHandler extends MySensorHandler {
         return resultMatrix;
     }
 
+    private void handleAccleration(){
+        if (hardAcceleration()) {
+            colourTimer = System.nanoTime();
+            mColorBox.setBackgroundColor(0xFFFF0000);
+            if (!accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
+                accelerating = true;
+                lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                // TODO: Add to database as start of a hard acceleration
+            }
+        } else if (accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
+            accelerating = false;
+            lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            // TODO: Add to database as end of hard acceleration
+        }
+
+        if (System.nanoTime() - colourTimer > redTime) {
+            colourTimer = 0;
+            mColorBox.setBackgroundColor(0xFF00FF00);
+        }
+    }
+
 
     private boolean hardAcceleration() {
         float diffy = 0;
@@ -210,8 +232,6 @@ public class MyAccelerometerHandler extends MySensorHandler {
     class SensorFusion extends TimerTask{
         public void run(){
             float oneMinusAlpha = 1f - alpha;
-
-
             if(init){
                 fusedOrientation[0] = accOrientation[0];
                 fusedOrientation[1] = accOrientation[1];
@@ -239,25 +259,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
                 myList.clear();
             }
 /*
-            if (hardAcceleration()) {
-                colourTimer = System.nanoTime();
-                mColorBox.setBackgroundColor(0xFFFF0000);
-                if (!accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
-                    accelerating = true;
-                    lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                    // TODO: Add to database as start of a hard acceleration
-                }
-            }
-            else if (accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
-                accelerating = false;
-                lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                // TODO: Add to database as end of hard acceleration
-            }
 
-            if (System.nanoTime() - colourTimer > redTime) {
-                colourTimer = 0;
-                mColorBox.setBackgroundColor(0xFF00FF00);
-            }
 */
              strx = "Accelerometer x-axis: " +  (acceleration[1] - (gyroRotation[7] * 10f)) + "\n";
              stry = "Accelerometer y-axis: " +  acceleration[1] + "\n";

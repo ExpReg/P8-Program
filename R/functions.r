@@ -1,5 +1,6 @@
 library(RSQLite)
 library(functional)
+
 require(RSQLite)
 
 getAllTrips <- function(dbConnection){
@@ -12,6 +13,21 @@ getAllTrips <- function(dbConnection){
   return(myList)
 }
 
+myDTW <-function(data){
+  raw <- data[,3]
+  filtered <- data[,4]
+  dtwed <- dtw(raw,filtered)
+  dtwed$distance
+}
+
+kendallStuff <- function(data){
+  raw <- data[,3]
+  filtered <- data[,4]
+  cor(raw,filtered,method="kendall")
+}
+
+
+
 getTrip <- function(dbconnection,tripNr){
   #Handle dates
   dates <- dbGetQuery(dbconnection,paste("SELECT created_at FROM sensor WHERE trip =", tripNr,sep = ""))
@@ -20,7 +36,7 @@ getTrip <- function(dbconnection,tripNr){
   relativeTime = round(convertedDates - convertedDates[1],digits = 3)
   
   #Handle accerlation 
-  accerlationAxes <-  dbGetQuery(dbconnection,paste("SELECT acc_x,acc_z, acc_y FROM sensor WHERE trip = ",tripNr,sep = ""))
+  accerlationAxes <-  dbGetQuery(dbconnection,paste("SELECT acc_x,acc_y, acc_z FROM sensor WHERE trip = ",tripNr,sep = ""))
   x_values <- accerlationAxes[[1]]
   y_values <- accerlationAxes[[3]]
   z_values <- accerlationAxes[[2]]
@@ -30,12 +46,12 @@ getTrip <- function(dbconnection,tripNr){
 
 #PlOT RELATED FUNCTIONS
 plotStuff <- function(toPlot,name,row){
-  plot(toPlot[,c(2,row)],  xlab = "Time \n s", ylab = "acceleration  m/s^2",main = name, col = 2 )
+  plot(toPlot[,c(2,row)],  xlab = "Time \n s", ylab = "acceleration  m/s^2",main = name, col = 2)
 }
 
 plotx <- Curry(plotStuff,name = "x-axis",row = 3)
-ploty <- Curry(plotStuff,name = "y-axis",row = 5)
-plotz <- Curry(plotStuff,name = "z-axis", row = 4)
+ploty <- Curry(plotStuff,name = "y-axis",row = 4)
+plotz <- Curry(plotStuff,name = "z-axis", row = 5)
 plotAll <- Curry(plotStuff, name = "All axes",row = 6)
 
 plotAllInOne <- function(toPlot){
@@ -46,6 +62,7 @@ plotAllInOne <- function(toPlot){
   plotAll(toPlot)
   par(mfrow = c(1,1))
 }
+
 
 
 #USED FOR FILTERING
@@ -75,12 +92,19 @@ filterWihtLowPass <- function(data){
   return(data.frame(time,filteredData))
 }
 
+filterWihtLowPass2 <- function(data){
+  time <- data[c(1,2)]
+  data <- data[3:6]
+  filteredData <- apply(data,2,function(x) lowPassFilter2(x))
+  return(data.frame(time,filteredData))
+}
+
 getTimeAll<- function(dataFrame){
   dataFrame[c(2,6)]
 }
 
 selectValues <- function(data){
-  subset(data,allAxes < 0.5 & acc_y < 0.5 & acc_y > -0.1)
+  subset(data,allAxes < 0.5 & acc_y <0 & acc_y > -0.2)
 }
 
 determineFutureDiff <- function(data){
@@ -135,17 +159,53 @@ lowPassFilter <- function(data){
   vect
 }
 
+
+lowPassFilter2 <- function(data){
+  vect <- vector()
+  vect[[1]]<- data[[1]]
+  for(i in 2:length(data)){
+    vect[[i]] <- 0.8* vect[[i - 1]] + (0.2 * data[[i]])
+  }
+  vect <- data - vect
+  vect
+}
+
 plotLines <- function(data){
-  plot(data[[1]],type = "n", ylim = c(-0.1,0.2),xlim = c(0.9,1.5))
+  plot(data[[1]],type = "n", ylim = c(-0.1,0),xlim = c(0.9,1.5))
   color <- c("black","blue","green","red","greenyellow")
   
   legend( x= "topright", y=0.92, 
-          legend=c("1","2", "3", "4","5"), 
-          col=c("black", "blue", "green", "red","greenyellow"),   
+          legend=c("1","2", "3", "4","5","6","7","8","9","10"), 
+          col=c("black", "blue", "green", "red","greenyellow","orange","midnightblue","seagreen", "steelblue", "tan4"), 
           pch=15)
   
   for(i in 1:length(data)){
     lines(data[[i]],col = color[[i]])
   }
+  
+}
+
+handleValues <- function(data){
+  
+}
+
+
+
+duplicatedTime <- function(data){
+  toRemove <- vector()
+  for(i in 2:nrow(data)){   
+    if(data[i,][2] == data[i - 1,][2]){
+      meanx <- mean(c(data[i,][[3]], data[i-1,][[3]])) 
+      meany <- mean(c(data[i,][[4]],data[i-1,][[4]]))
+      meanz <- mean(c(data[i,][[5]],data[i-1,][[5]]))
+      meanAll <- mean(c(data[i,][[6]],data[i-1,][[6]]))
+      data[i,] <- c(data[i,][1:2],meanx,meany,meanz,meanAll)
+      toRemove <- append(i-1,toRemove)
+    }
+  }
+  if(length(toRemove) == 0){
+    return(data)
+  }
+  return(data[-toRemove,])
   
 }

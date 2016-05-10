@@ -46,7 +46,8 @@ getTrip <- function(dbconnection,tripNr){
 
 #PlOT RELATED FUNCTIONS
 plotStuff <- function(toPlot,name,row){
-  plot(toPlot[,c(2,row)],  xlab = "Time \n s", ylab = "acceleration  m/s^2",main = name, col = 2)
+  plot(toPlot[,c(2,row)],  xlab = "Time \n s", ylab = "acceleration  m/s^2",main = name, col = "black",pch 
+       = 16)
 }
 
 plotx <- Curry(plotStuff,name = "x-axis",row = 3)
@@ -172,8 +173,8 @@ lowPassFilter2 <- function(data){
 }
 
 plotLines <- function(data){
-  plot(data[[1]],type = "n", ylim = c(-0.1,0),xlim = c(0.9,1.5))
-  color <- c("black","blue","green","red","greenyellow")
+  plot(data[[1]],type = "n", ylim = c(-0.14,0),xlim = c(0.9,1.5), xlab = "Time \n s", ylab = "acceleration  m/s^2",main = "1 Meter falls")
+  color <- c("black", "blue", "green", "red","greenyellow","orange","midnightblue","seagreen", "steelblue", "tan4")
   
   legend( x= "topright", y=0.92, 
           legend=c("1","2", "3", "4","5","6","7","8","9","10"), 
@@ -187,7 +188,17 @@ plotLines <- function(data){
 
 
 handleValues <- function(data){
+  vect <- vector()
   
+  for(i in 1:length(data)){
+    if(i <= 25){
+      vect[[i]] <- max(data[1:i]) - min(data[1:i])
+    }
+    else{
+      vect[[i]] <- max(data[(i-25):i]) - min(data[(i-25):i])
+    }
+  }
+  return(vect)
 }
 
 

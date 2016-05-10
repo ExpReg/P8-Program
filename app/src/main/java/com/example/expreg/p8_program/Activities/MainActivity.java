@@ -218,11 +218,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void startTrip(View view) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        int frequency = sharedPref.getInt(getString(R.string.pref_sensorFrequency), 20);
-
         Intent myIntent = new Intent(this, StartTripActivity.class);
-        myIntent.putExtra("frequency", frequency);
         startActivity(myIntent);
     }
 

@@ -1,5 +1,7 @@
 package com.example.expreg.p8_program.Activities;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +19,7 @@ public class StartTripActivity extends AppCompatActivity implements
 
     protected GoogleApiClient mGoogleApiClient;
     protected MyAccelerometerHandler mAccelerometerHandler;
+    protected SharedPreferences mSharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,7 @@ public class StartTripActivity extends AppCompatActivity implements
 
         mGoogleApiClient = buildGoogleApiClient();
         mAccelerometerHandler = new MyAccelerometerHandler(this);
+        mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
@@ -33,8 +37,7 @@ public class StartTripActivity extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
-        // TODO: Add frequency to preferences and get it that way
-        int frequency = getIntent().getIntExtra("frequency", 20);
+        int frequency = Integer.parseInt(mSharedPref.getString("pref_sensorFrequency", "20"));
         mAccelerometerHandler.start(frequency);
     }
 

@@ -61,10 +61,6 @@ public abstract class MySensorHandler implements SensorEventListener {
         // Do something if accuracy changes
     }
 
-    public String getDBLocation(){
-        return "/data/com.example.expreg.p8_program/databases/" + mDb.getDatabaseName();
-    }
-
     protected float[] lowPassFilter(float[] input, float[] output) {
         float ALPHA = 0.25f; //ALPHA is the cut-off/threshold.
         if(output == null ) {

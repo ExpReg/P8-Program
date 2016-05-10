@@ -17,7 +17,7 @@ public class MyPreferenceFragment extends PreferenceFragment implements SharedPr
 
         for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); ++i) {
             Preference preference = getPreferenceScreen().getPreference(i);
-            updatePreference(preference, preference.getKey());
+            updatePreference(preference);
         }
     }
 
@@ -34,15 +34,14 @@ public class MyPreferenceFragment extends PreferenceFragment implements SharedPr
     }
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        updatePreference(findPreference(key), key);
+        updatePreference(findPreference(key));
     }
 
-    public void updatePreference (Preference pref, String key) {
+    public void updatePreference (Preference pref) {
         if (pref == null) return;
         if (pref instanceof EditTextPreference) {
             EditTextPreference editPref = (EditTextPreference) pref;
             pref.setSummary(editPref.getText());
-            return;
         }
     }
 }

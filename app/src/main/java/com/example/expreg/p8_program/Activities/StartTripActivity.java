@@ -27,7 +27,7 @@ public class StartTripActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_start_trip);
 
         mGoogleApiClient = buildGoogleApiClient();
-        mAccelerometerHandler = new MyAccelerometerHandler(this);
+        mAccelerometerHandler = new MyAccelerometerHandler(this, mGoogleApiClient);
         mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

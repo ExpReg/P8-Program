@@ -8,10 +8,14 @@
         android:summary="@string/pref_sensorFrequency_summary"
         android:inputType="number"
         android:defaultValue="@string/pref_sensorFrequency_default" />
-    <!--
-    <Preference android:title="@string/pref_exportDB" >
-        <intent
-            android:action="android.intent.action.MAIN"
-            android:targetClass="http://www.example.com" />
-    </Preference> -->
+    <Preference
+        android:key="pref_exportDB"
+        android:title="@string/pref_exportDB"
+        android:summary="@string/pref_exportDB_summary">
+    </Preference>
+    <Preference
+        android:key="pref_deleteDB"
+        android:title="@string/pref_deleteDB"
+        android:summary="@string/pref_deleteDB_summary">
+    </Preference>
 </PreferenceScreen>

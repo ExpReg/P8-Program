@@ -5,5 +5,7 @@
     <string name="pref_sensorFrequency_default">20</string>
     <string name="pref_sensorFrequency_summary">The frequency of the sensors</string>
     <string name="pref_exportDB">Export DB</string>
+    <string name="pref_exportDB_summary">Export the database to the root of the phone directory</string>
     <string name="pref_deleteDB">Delete DB</string>
+    <string name="pref_deleteDB_summary">Delete the content of the database</string>
 </resources>

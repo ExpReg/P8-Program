@@ -73,6 +73,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void deleteDB() {
+        Log.i("dbDelete", "DB deleted");
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS sensor");
         db.execSQL("DROP TABLE IF EXISTS detection");
@@ -81,6 +82,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void exportDB() {
+        Log.i("dbExport", "DB exported");
         File sd = Environment.getExternalStorageDirectory();
         File data = Environment.getDataDirectory();
         FileChannel source=null;

@@ -38,10 +38,7 @@ public class MainActivity extends AppCompatActivity {
     protected MySensorHandler mAccelerometerHandler = null;
 
     // Buttons
-    protected Button exportButton = null;
-    protected Button deleteButton = null;
     protected Button startTripButton = null;
-    protected Button stopTripButton = null;
     protected Button startCalibrationButton = null;
     protected Button stopCalibrationButton = null;
 
@@ -56,14 +53,10 @@ public class MainActivity extends AppCompatActivity {
         mAccelerometerTextView = (TextView) findViewById(R.id.accelerometer_text);
 
         // Gets the buttons
-        exportButton = (Button) findViewById(R.id.exportButton);
-        deleteButton = (Button) findViewById(R.id.deleteButton);
         startTripButton = (Button) findViewById(R.id.startTripButton);
-        stopTripButton = (Button) findViewById(R.id.stopTripButton);
         startCalibrationButton = (Button) findViewById(R.id.startCalibrationButton);
         stopCalibrationButton = (Button) findViewById(R.id.stopCalibrationButton);
 
-        stopTripButton.setEnabled(false);
         stopCalibrationButton.setEnabled(false);
 
         // Gets the calibration stuff from file
@@ -74,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             this.calibrateVar = MyCircularQueue.readVariance(this);
         }
 
-        mAccelerometerHandler = new MyAccelerometerHandler(this);
+        //mAccelerometerHandler = new MyAccelerometerHandler(this);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
@@ -87,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        mAccelerometerHandler.stop();
+        //mAccelerometerHandler.stop();
     }
 
     // Options menu
@@ -111,36 +104,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Button methods
-    public void export(View view){
-        MySQLiteHelper.getInstance(this).exportDB();
-        Toast.makeText(this, "DB Exported!", Toast.LENGTH_LONG).show();
-    }
-
-    public void deleteDB(View view){
-        new AlertDialog.Builder(this)
-                .setTitle("Delete Database")
-                .setMessage("Do you really want to delete the database?")
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        MySQLiteHelper.getInstance(getApplicationContext()).deleteDB();
-                        Toast.makeText(MainActivity.this, "DB Deleted!", Toast.LENGTH_LONG).show();
-                    }})
-                .setNegativeButton(android.R.string.no, null).show();
-    }
-
     public void startTrip(View view) {
         Intent myIntent = new Intent(this, StartTripActivity.class);
         startActivity(myIntent);
-    }
-
-    public void stopTrip(View view) {
-        mAccelerometerHandler.stop();
-        startTripButton.setEnabled(true);
-        startCalibrationButton.setEnabled(true);
-        stopTripButton.setEnabled(false);
-        exportButton.setEnabled(true);
-        deleteButton.setEnabled(true);
     }
 
     public void startCalibration(View view) {
@@ -151,8 +117,6 @@ public class MainActivity extends AppCompatActivity {
         startTripButton.setEnabled(false);
         startCalibrationButton.setEnabled(false);
         stopCalibrationButton.setEnabled(true);
-        exportButton.setEnabled(false);
-        deleteButton.setEnabled(false);
     }
 
     public void stopCalibration(View view) {
@@ -160,8 +124,6 @@ public class MainActivity extends AppCompatActivity {
         startTripButton.setEnabled(true);
         startCalibrationButton.setEnabled(true);
         stopCalibrationButton.setEnabled(false);
-        exportButton.setEnabled(true);
-        deleteButton.setEnabled(true);
         this.calibrateAvg = MyCircularQueue.readAverage(this);
         this.calibrateVar = MyCircularQueue.readVariance(this);
     }

@@ -74,21 +74,31 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
         switch (event.sensor.getType()){
             case Sensor.TYPE_ACCELEROMETER:
-                System.arraycopy(event.values, 0, acceleration, 0, 3);
+                /*
                 if(SensorManager.getRotationMatrix(accRotationmatrix,null,acceleration,magnetic)){
                     SensorManager.getRotationMatrix(accRotationmatrix,null,acceleration,magnetic);
                     accOrientation = new float[3];
                     SensorManager.getOrientation(accRotationmatrix, accOrientation);
                 }
+                */
+                AccelerometerMeasure result = new AccelerometerMeasure(mTrip, event.values[0], event.values[1], event.values[2]);
+                mCalibrationManager.add(result);
+                myList.add(result);
+
+                strx = "Accelerometer x-axis: " +  acceleration[0] + "\n";
+                stry = "Accelerometer y-axis: " +  acceleration[1] + "\n";
+                strz = "Accelerometer z-axis: " +  acceleration[2];
+
                 mSensorTextView.setText(strx + stry + strz);
                 break;
-
+/*
             case Sensor.TYPE_GYROSCOPE:
                 handleGyro(event);
             break;
             case Sensor.TYPE_MAGNETIC_FIELD:
                 System.arraycopy(event.values,0,magnetic,0,3);
             break;
+            */
 
         }
     }
@@ -194,15 +204,16 @@ public class MyAccelerometerHandler extends MySensorHandler {
     public void start(int frequency){
         super.start(frequency);
         this.myList.clear();
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new SensorFusion(),1000,time);
+       // timer = new Timer();
+        //timer.scheduleAtFixedRate(new SensorFusion(),1000,time);
     }
 
     @Override
     public void stop() {
         super.stop();
-        timer.cancel();
-        timer.purge();
+        mDb.addMeasures(myList);
+        //timer.cancel();
+        //timer.purge();
         mColorBox.setBackgroundColor(0xFF00FF00);
         init = true;
     }
@@ -259,9 +270,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
                 mColorBox.setBackgroundColor(0xFF00FF00);
             }
 */
-             strx = "Accelerometer x-axis: " +  (acceleration[1] - (gyroRotation[7] * 10f)) + "\n";
-             stry = "Accelerometer y-axis: " +  acceleration[1] + "\n";
-             strz = "Accelerometer z-axis: " +  acceleration[2];
+
 
         }
     }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Need: Frequency, Export DB, Delete DB, Calibrate-->
     <EditTextPreference
         android:key="pref_sensorFrequency"
         android:title="@string/pref_sensorFrequency"
@@ -17,5 +16,12 @@
         android:key="pref_deleteDB"
         android:title="@string/pref_deleteDB"
         android:summary="@string/pref_deleteDB_summary">
+    </Preference>
+    <Preference
+        android:title="@string/pref_calibrate"
+        android:summary="@string/pref_calibrate_summary">
+        <intent
+            android:targetPackage="com.example.expreg.p8_program.Activities"
+            android:targetClass="CalibrationActivity"/>
     </Preference>
 </PreferenceScreen>

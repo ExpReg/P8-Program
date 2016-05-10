@@ -31,5 +31,9 @@
         <activity
             android:name=".Activities.MyPreferenceActivity"
             android:label="Preferences"/>
+
+        <activity
+            android:name=".Activities.CalibrationActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
     </application>
 </manifest>

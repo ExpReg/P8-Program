@@ -28,20 +28,6 @@ import com.example.expreg.p8_program.SensorHandlers.MyCircularQueue;
 import com.example.expreg.p8_program.SensorHandlers.MySensorHandler;
 
 public class MainActivity extends AppCompatActivity {
-    AccelerometerMeasure calibrateAvg = null;
-    AccelerometerMeasure calibrateVar = null;
-
-    // Text views
-    protected TextView mAccelerometerTextView = null;
-
-    // Sensor handlers
-    protected MySensorHandler mAccelerometerHandler = null;
-
-    // Buttons
-    protected Button startTripButton = null;
-    protected Button startCalibrationButton = null;
-    protected Button stopCalibrationButton = null;
-
     // Lifecycle methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,25 +35,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
-        // Gets the text views
-        mAccelerometerTextView = (TextView) findViewById(R.id.accelerometer_text);
-
-        // Gets the buttons
-        startTripButton = (Button) findViewById(R.id.startTripButton);
-        startCalibrationButton = (Button) findViewById(R.id.startCalibrationButton);
-        stopCalibrationButton = (Button) findViewById(R.id.stopCalibrationButton);
-
-        stopCalibrationButton.setEnabled(false);
-
-        // Gets the calibration stuff from file
-        // TODO: Convert to shared preferences
-        File file = new File(MyCircularQueue.filename);
-        if(file.exists()) {
-            this.calibrateAvg = MyCircularQueue.readAverage(this);
-            this.calibrateVar = MyCircularQueue.readVariance(this);
+        if (!PreferenceManager.getDefaultSharedPreferences(this).contains("pref_accAvg") || !PreferenceManager.getDefaultSharedPreferences(this).contains("pref_accVar")) {
+            Intent intent = new Intent(this, CalibrationActivity.class);
+            startActivity(intent);
         }
-
-        //mAccelerometerHandler = new MyAccelerometerHandler(this);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
@@ -80,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        //mAccelerometerHandler.stop();
     }
 
     // Options menu
@@ -107,24 +77,5 @@ public class MainActivity extends AppCompatActivity {
     public void startTrip(View view) {
         Intent myIntent = new Intent(this, StartTripActivity.class);
         startActivity(myIntent);
-    }
-
-    public void startCalibration(View view) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        int frequency = sharedPref.getInt(getString(R.string.pref_sensorFrequency), 20);
-
-        mAccelerometerHandler.start(frequency, true);
-        startTripButton.setEnabled(false);
-        startCalibrationButton.setEnabled(false);
-        stopCalibrationButton.setEnabled(true);
-    }
-
-    public void stopCalibration(View view) {
-        mAccelerometerHandler.stop();
-        startTripButton.setEnabled(true);
-        startCalibrationButton.setEnabled(true);
-        stopCalibrationButton.setEnabled(false);
-        this.calibrateAvg = MyCircularQueue.readAverage(this);
-        this.calibrateVar = MyCircularQueue.readVariance(this);
     }
 }

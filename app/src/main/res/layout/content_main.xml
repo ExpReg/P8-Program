@@ -18,57 +18,13 @@
         android:text="Accelerometer x-axis: \nAccelerometer y-axis: \nAccelerometer z-axis:"
         android:id="@+id/accelerometer_text" />
 
-    <TableLayout android:id="@+id/button_table"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/startTripButton"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/accelerometer_text"
         android:layout_centerInParent="true"
-        android:layout_below="@+id/accelerometer_text">
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Start Trip"
-                android:onClick="startTrip"
-                android:layout_weight="1"
-                android:id="@+id/startTripButton" />
-        </TableRow>
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Start Calibration"
-                android:onClick="startCalibration"
-                android:layout_weight="0.5"
-                android:id="@+id/startCalibrationButton" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Stop Calibration"
-                android:onClick="stopCalibration"
-                android:layout_weight="0.5"
-                android:id="@+id/stopCalibrationButton" />
-        </TableRow>
-    </TableLayout>
-
-    <SurfaceView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/color_box"
-        android:background="#00FF00"
-        android:layout_below="@+id/button_table"
-        android:layout_marginTop="20dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:text="Start Trip"
+        android:onClick="startTrip" />
 
 </RelativeLayout>

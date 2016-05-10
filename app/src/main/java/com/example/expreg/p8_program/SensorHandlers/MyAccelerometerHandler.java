@@ -8,12 +8,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.TextView;
 
-import com.example.expreg.p8_program.DB.MySQLiteHelper;
 import com.example.expreg.p8_program.Model.AccelerometerMeasure;
 import com.example.expreg.p8_program.R;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -27,8 +28,7 @@ import java.util.TimerTask;
 public class MyAccelerometerHandler extends MySensorHandler {
     protected static double mCutoffAccel = 0.1 * 9.82;
     protected static double mCutoffBrake = -0.1 * 9.82;
-    protected TextView mSensorTextView = null;
-    protected SurfaceView mColorBox = null;
+    protected View mView;
     protected List<AccelerometerMeasure> myList = new ArrayList<>();
     protected long colourTimer = 0;
     protected long redTime = 5000000000L;
@@ -54,9 +54,6 @@ public class MyAccelerometerHandler extends MySensorHandler {
     private final float[] deltaRotationVector = new float[4];
     private float timestamp = 0;
 
-    protected String strx = "";
-    protected String stry = "";
-    protected String strz = "";
     protected  int test = 1;
 
     public MyAccelerometerHandler(Context context) {
@@ -65,13 +62,11 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
     public MyAccelerometerHandler(Context context, GoogleApiClient client) {
         super(context, Sensor.TYPE_ACCELEROMETER, client);
-        mSensorTextView = (TextView) ((Activity)context).findViewById(R.id.accelerometer_text);
-        mColorBox = (SurfaceView) ((Activity)context).findViewById(R.id.color_box);
+        mView = ((Activity)mContext).findViewById(R.id.activity_start_trip);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
         switch (event.sensor.getType()){
             case Sensor.TYPE_ACCELEROMETER:
                 System.arraycopy(event.values, 0, acceleration, 0, 3);
@@ -80,8 +75,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
                     accOrientation = new float[3];
                     SensorManager.getOrientation(accRotationmatrix, accOrientation);
                 }
-                handleAccleration();
-                if (mSensorTextView != null) mSensorTextView.setText(strx + stry + strz);
+                handleAcceleration();
                 break;
 
             case Sensor.TYPE_GYROSCOPE:
@@ -93,8 +87,9 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
         }
     }
+
     // Taken FROM THE ANDROID TURTORIAL http://developer.android.com/guide/topics/sensors/sensors_motion.html#sensors-motion-gyro
-    private void handleGyro(SensorEvent event){
+    private void handleGyro(SensorEvent event) {
 
         if(accOrientation == null)
             return;
@@ -140,8 +135,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
         SensorManager.getOrientation(gyroRotation, gyroOrientation);
     }
 
-    private float[] matrixMultiplication(float[] A, float[] B ){
-
+    private float[] matrixMultiplication(float[] A, float[] B ) {
         float[] result = new float[9];
         for(int i = 0; i < 9; i++){
             result[i] = A[(i/3) * 3]*B[(i % 3)] + A[((i/3) * 3) + 1]*B[(i % 3) + 3] + A[((i/3) * 3) + 2]*B[(i % 3) + 6];
@@ -183,35 +177,40 @@ public class MyAccelerometerHandler extends MySensorHandler {
         return resultMatrix;
     }
 
-    private void handleAccleration(){
+    private void handleAcceleration() {
         if (hardAcceleration()) {
             colourTimer = System.nanoTime();
+            mView.setBackgroundColor(0xFFFF0000);
             if (!accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
                 accelerating = true;
                 lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                 // TODO: Add to database as start of a hard acceleration
+                //mDb.addDetection(mTrip, lastKnownLocation, "Acceleration/Break Start", "Date of last measurement");
             }
         } else if (accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
             accelerating = false;
             lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             // TODO: Add to database as end of hard acceleration
+            //mDb.addDetection(mTrip, lastKnownLocation, "Acceleration/Break End", "Date of last measurement");
+
         }
 
         if (System.nanoTime() - colourTimer > redTime) {
             colourTimer = 0;
+            mView.setBackgroundColor(0xFF00FF00);
         }
     }
 
 
     private boolean hardAcceleration() {
         float diffy = 0;
-        if (mCalibrationManager.size() >= mFrequency)
-            diffy = mCalibrationManager.getMax().getAcc_y() - mCalibrationManager.getMin().getAcc_y();
+        if (mCircularQueue.isFull())
+            diffy = mCircularQueue.getMax().getAcc_y() - mCircularQueue.getMin().getAcc_y();
 
         return (diffy > mCutoffAccel || diffy < mCutoffBrake);
     }
 
-    public void start(int frequency){
+    public void start(int frequency) {
         super.start(frequency);
         this.myList.clear();
         timer = new Timer();
@@ -223,11 +222,11 @@ public class MyAccelerometerHandler extends MySensorHandler {
         super.stop();
         timer.cancel();
         timer.purge();
-        if (mColorBox != null) mColorBox.setBackgroundColor(0xFF00FF00);
+        mView.setBackgroundColor(0xFF00FF00);
         init = true;
     }
 
-    class SensorFusion extends TimerTask{
+    class SensorFusion extends TimerTask {
         public void run(){
             float oneMinusAlpha = 1f - alpha;
             if(init){
@@ -248,20 +247,16 @@ public class MyAccelerometerHandler extends MySensorHandler {
             System.arraycopy(fusedOrientation, 0, gyroOrientation, 0, 3);
             Log.d("SensorChanged", "Sensor has changed");
 
+            // TODO Get calibrated average with the following commented line. Use key "pref_accVar" for the variance.
+            // PreferenceManager.getDefaultSharedPreferences(mContext).getFloat("pref_accAvg", "someDefaultValue");
             AccelerometerMeasure result = new AccelerometerMeasure(mTrip, acceleration[1],acceleration[1],acceleration[1] - (gyroRotation[7] * 10.12889f));
-            mCalibrationManager.add(result);
+            mCircularQueue.add(result);
             myList.add(result);
 
-            if (myList.size() >= 10 && !mCalibrate) {
+            if (myList.size() >= 10) {
                 mDb.addMeasures(myList);
                 myList.clear();
             }
-             strx = "Accelerometer x-axis: " +  (acceleration[1] - (gyroRotation[7] * 10f)) + "\n";
-             stry = "Accelerometer y-axis: " +  acceleration[1] + "\n";
-             strz = "Accelerometer z-axis: " +  acceleration[2];
-
         }
     }
-
-
 }

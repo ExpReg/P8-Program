@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerInParent="true"
-            android:text="Stop Trip"
+            android:text="@string/stopTrip_button_text"
             android:onClick="stopTrip"/>
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

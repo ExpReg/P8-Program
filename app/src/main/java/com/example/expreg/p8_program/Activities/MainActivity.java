@@ -1,9 +1,6 @@
 package com.example.expreg.p8_program.Activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -12,20 +9,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 
-import java.io.File;
-
-import com.example.expreg.p8_program.DB.MySQLiteHelper;
-import com.example.expreg.p8_program.Model.AccelerometerMeasure;
 import com.example.expreg.p8_program.R;
-import com.example.expreg.p8_program.SensorHandlers.MyAccelerometerHandler;
-import com.example.expreg.p8_program.SensorHandlers.MyCircularQueue;
-import com.example.expreg.p8_program.SensorHandlers.MySensorHandler;
 
 public class MainActivity extends AppCompatActivity {
     // Lifecycle methods
@@ -64,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.action_settings: {
+            case R.id.settings_button: {
                 Intent intent = new Intent(this, MyPreferenceActivity.class);
                 startActivity(intent);
                 return true;

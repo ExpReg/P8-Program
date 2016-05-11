@@ -15,16 +15,20 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Accelerometer x-axis: \nAccelerometer y-axis: \nAccelerometer z-axis:"
-        android:id="@+id/accelerometer_text" />
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:textSize="30sp"
+        android:textColor="@color/colorPrimary"
+        android:text="@string/app_name"
+        android:id="@+id/title_text" />
 
     <Button
         android:id="@+id/startTripButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/accelerometer_text"
         android:layout_centerInParent="true"
-        android:text="Start Trip"
+        android:layout_alignParentBottom="true"
+        android:text="@string/startTrip_button_text"
         android:onClick="startTrip" />
 
 </RelativeLayout>

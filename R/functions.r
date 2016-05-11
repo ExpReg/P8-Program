@@ -1,6 +1,5 @@
 library(RSQLite)
 library(functional)
-
 require(RSQLite)
 
 getAllTrips <- function(dbConnection){
@@ -185,12 +184,9 @@ plotLines <- function(data){
     lines(data[[i]],col = color[[i]])
   }
 }
-
-
 handleValues <- function(data){
   vect <- vector()
-  
-  for(i in 1:length(data)){
+  for(i in 2:length(data)){
     if(i <= 25){
       vect[[i]] <- max(data[1:i]) - min(data[1:i])
     }
@@ -200,8 +196,6 @@ handleValues <- function(data){
   }
   return(vect)
 }
-
-
 
 duplicatedTime <- function(data){
   toRemove <- vector()

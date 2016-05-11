@@ -1,6 +1,7 @@
 package com.example.expreg.p8_program.SensorHandlers;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.expreg.p8_program.Model.AccelerometerMeasure;
 
@@ -14,6 +15,9 @@ public class MyCircularQueue {
     }
 
     public void add(AccelerometerMeasure measure) {
+        if (measure == null) {
+            Log.i("addQueue", "measure is null");
+        }
         measures.add(measure);
     }
 
@@ -30,6 +34,9 @@ public class MyCircularQueue {
     public AccelerometerMeasure getMax() {
         AccelerometerMeasure max = new AccelerometerMeasure(0, Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
         for (AccelerometerMeasure m : measures) {
+            if (m == null) {
+                Log.i("getMax", "m is null");
+            }
             if (m.getAcc_y() > max.getAcc_y()) {
                 max = m;
             }

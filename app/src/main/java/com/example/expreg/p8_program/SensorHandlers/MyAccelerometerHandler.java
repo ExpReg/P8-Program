@@ -24,8 +24,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MyAccelerometerHandler extends MySensorHandler {
-    protected static double mCutoffAccel = 0.1 * 9.82;
-    protected static double mCutoffBrake = -0.1 * 9.82;
+    protected static double mCutoffAccel = 3;
+    protected static double mCutoffBrake = -3;
     protected View mView;
     protected List<AccelerometerMeasure> myList = new ArrayList<>();
     protected long colourTimer = 0;
@@ -245,7 +245,10 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
             // TODO Get calibrated average with the following commented line. Use key "pref_accVar" for the variance.
             // PreferenceManager.getDefaultSharedPreferences(mContext).getFloat("pref_accAvg", "someDefaultValue");
-            AccelerometerMeasure result = new AccelerometerMeasure(mTrip, acceleration[1],acceleration[1],acceleration[1] - (gyroRotation[7] * 10.12889f));
+            AccelerometerMeasure result = new AccelerometerMeasure(mTrip, acceleration[1],acceleration[1] - (gyroRotation[7] * 10.12889f), acceleration[1]);
+            if (result == null) {
+                Log.i("sensorFusion", "result is null, acceleration[1]: " + acceleration[1] + " gyroRotation[7]: " + gyroRotation[7]);
+            }
             mCircularQueue.add(result);
             myList.add(result);
 

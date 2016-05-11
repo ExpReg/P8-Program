@@ -137,7 +137,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public void addMeasure(AccelerometerMeasure sensorMeasure){
         SQLiteDatabase db = this.getWritableDatabase();
         this.addMeasure(sensorMeasure, db);
-        db.close();
     }
 
     public void addMeasure(AccelerometerMeasure sensorMeasure, SQLiteDatabase db) {
@@ -176,8 +175,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_CREATED_AT, time);
 
         db.insert(TABLE_DETECTION, null, values);
-
-        db.close();
     }
 
     // Extractions

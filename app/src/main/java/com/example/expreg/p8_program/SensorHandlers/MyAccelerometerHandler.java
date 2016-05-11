@@ -178,7 +178,6 @@ public class MyAccelerometerHandler extends MySensorHandler {
     private void handleAcceleration() {
         if (isHardAcceleration()) {
             colourTimer = System.nanoTime();
-            Log.i("isHardAcceleration", "Hard acceleration detected");
             mView.setBackgroundColor(0xFFFF0000);
             if (!accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
                 accelerating = true;
@@ -200,9 +199,9 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
     private boolean isHardAcceleration() {
         float diffy = 0;
-        if (mCircularQueue.isFull())
+        if (mCircularQueue.isAtFullCapacity())
             diffy = mCircularQueue.getMax().getAcc_y() - mCircularQueue.getMin().getAcc_y();
-
+        Log.i("isHardAcceleration", "Diffy is " + diffy);
         return (diffy > mCutoffAccel || diffy < mCutoffBrake);
     }
 

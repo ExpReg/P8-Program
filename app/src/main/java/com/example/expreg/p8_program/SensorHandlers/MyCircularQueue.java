@@ -70,7 +70,7 @@ public class MyCircularQueue {
         return measures.size();
     }
 
-    public boolean isFull() {
-        return measures.isFull();
+    public boolean isAtFullCapacity() {
+        return measures.isAtFullCapacity();
     }
 }

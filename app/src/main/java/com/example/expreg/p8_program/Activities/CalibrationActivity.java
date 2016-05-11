@@ -22,7 +22,7 @@ public class CalibrationActivity extends Activity implements SensorEventListener
         super.onCreate(savedInstanceState);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mQueue = new MyCircularQueue(1000);
+        mQueue = new MyCircularQueue(200);
     }
 
     @Override
@@ -34,8 +34,7 @@ public class CalibrationActivity extends Activity implements SensorEventListener
     @Override
     protected void onResume() {
         super.onResume();
-        int frequency = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString("pref_sensorFrequency", "20"));
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 1000000 / frequency);
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override

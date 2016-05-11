@@ -27,7 +27,7 @@ public class MyPreferenceFragment extends PreferenceFragment implements SharedPr
         findPreference("pref_exportDB").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                MySQLiteHelper.getInstance(getActivity()).exportDB();
+                MySQLiteHelper.getInstance(getActivity()).exportDB(getActivity());
                 Toast.makeText(getActivity(), "DB Exported!", Toast.LENGTH_LONG).show();
                 return true;
             }

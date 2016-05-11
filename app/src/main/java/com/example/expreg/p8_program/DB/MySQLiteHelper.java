@@ -81,15 +81,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public void exportDB() {
+    public void exportDB(Context context) {
         Log.i("dbExport", "DB exported");
         File sd = Environment.getExternalStorageDirectory();
         File data = Environment.getDataDirectory();
         FileChannel source=null;
         FileChannel destination=null;
-        String currentDBPath = getDBLocation();
         String copyDBPath = "test.sqlite";
-        File currentDB = new File(data, currentDBPath);
+        File currentDB = context.getDatabasePath(getDatabaseName());
         File copyDB = new File(sd, copyDBPath);
 
         try {
@@ -163,6 +162,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void addDetection(int trip, Location loc, String type, String time) {
+        if (loc == null) {
+            Log.d("addDetection", "loc is null");
+            return;
+        }
         Log.d("addDetection", type + " " + loc.toString());
 
         SQLiteDatabase db = this.getWritableDatabase();

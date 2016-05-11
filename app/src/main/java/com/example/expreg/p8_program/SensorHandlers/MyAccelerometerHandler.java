@@ -8,12 +8,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.view.SurfaceView;
 import android.view.View;
-import android.widget.TextView;
 
 import com.example.expreg.p8_program.Model.AccelerometerMeasure;
 import com.example.expreg.p8_program.R;
@@ -21,6 +18,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -178,21 +176,19 @@ public class MyAccelerometerHandler extends MySensorHandler {
     }
 
     private void handleAcceleration() {
-        if (hardAcceleration()) {
+        if (isHardAcceleration()) {
             colourTimer = System.nanoTime();
+            Log.i("isHardAcceleration", "Hard acceleration detected");
             mView.setBackgroundColor(0xFFFF0000);
             if (!accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
                 accelerating = true;
                 lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                // TODO: Add to database as start of a hard acceleration
-                //mDb.addDetection(mTrip, lastKnownLocation, "Acceleration/Break Start", "Date of last measurement");
+                mDb.addDetection(mTrip, lastKnownLocation, "Acceleration/Deceleration Start", new Date().toString());
             }
         } else if (accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
             accelerating = false;
             lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            // TODO: Add to database as end of hard acceleration
-            //mDb.addDetection(mTrip, lastKnownLocation, "Acceleration/Break End", "Date of last measurement");
-
+            mDb.addDetection(mTrip, lastKnownLocation, "Acceleration/Deceleration End", new Date().toString());
         }
 
         if (System.nanoTime() - colourTimer > redTime) {
@@ -202,7 +198,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
     }
 
 
-    private boolean hardAcceleration() {
+    private boolean isHardAcceleration() {
         float diffy = 0;
         if (mCircularQueue.isFull())
             diffy = mCircularQueue.getMax().getAcc_y() - mCircularQueue.getMin().getAcc_y();
@@ -213,6 +209,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
     public void start(int frequency) {
         super.start(frequency);
         this.myList.clear();
+        this.accelerating = false;
         timer = new Timer();
         timer.scheduleAtFixedRate(new SensorFusion(),1000,time);
     }

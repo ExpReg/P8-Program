@@ -26,6 +26,7 @@ public abstract class MySensorHandler implements SensorEventListener {
     public MySensorHandler(Context context, int sensorType, GoogleApiClient client) {
         mContext = context;
         mDb = MySQLiteHelper.getInstance(context);
+        mCircularQueue = new MyCircularQueue(25);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(sensorType);
         mGoogleApiClient = client;
@@ -35,7 +36,7 @@ public abstract class MySensorHandler implements SensorEventListener {
         if (mDb != null) {
             mTrip = mDb.getLastTrip() + 1;
         }
-        mCircularQueue = new MyCircularQueue(frequency);
+
         mSensorManager.registerListener(this, mSensor, 1000000 / frequency);
         mSensorManager.registerListener(this,mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE),1000000 / frequency );
         mSensorManager.registerListener(this,mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),1000000 / frequency );

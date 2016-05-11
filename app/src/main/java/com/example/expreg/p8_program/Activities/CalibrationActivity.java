@@ -1,6 +1,7 @@
 package com.example.expreg.p8_program.Activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -26,20 +27,18 @@ public class CalibrationActivity extends Activity implements SensorEventListener
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        mSensorManager.unregisterListener(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
+        // TODO: If this doesn't work, set OnClickListener instead of null. Maybe add .setCancelable(false) as well.
+        new AlertDialog.Builder(this)
+                .setTitle("Calibrating").setMessage("Calibrating the sensors. Put the phone flat on a surface with the screen up and wait two seconds for a Calibrated! message to show.").setPositiveButton("OK", null).show();
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        mSensorManager.unregisterListener(this);
         PreferenceManager.getDefaultSharedPreferences(this).edit()
                 .putFloat("pref_accAvg", mQueue.getAverage().getAcc_y())
                 .putFloat("pref_accVar", mQueue.getVariance().getAcc_y())

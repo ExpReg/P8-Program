@@ -21,7 +21,7 @@
         android:title="@string/pref_calibrate"
         android:summary="@string/pref_calibrate_summary">
         <intent
-            android:targetPackage="com.example.expreg.p8_program.Activities"
-            android:targetClass="CalibrationActivity"/>
+            android:targetPackage="com.example.expreg.p8_program"
+            android:targetClass="com.example.expreg.p8_program.Activities.CalibrationActivity"/>
     </Preference>
 </PreferenceScreen>

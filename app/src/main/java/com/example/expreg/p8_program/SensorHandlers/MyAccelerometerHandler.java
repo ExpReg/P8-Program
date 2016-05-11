@@ -182,6 +182,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
             if (!accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
                 accelerating = true;
                 lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                // TODO: Determine if it is acceleration or deceleration
                 mDb.addDetection(mTrip, lastKnownLocation, "Acceleration/Deceleration Start", new Date().toString());
             }
         } else if (accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
@@ -195,7 +196,6 @@ public class MyAccelerometerHandler extends MySensorHandler {
             mView.setBackgroundColor(0xFF00FF00);
         }
     }
-
 
     private boolean isHardAcceleration() {
         float diffy = 0;
@@ -223,9 +223,9 @@ public class MyAccelerometerHandler extends MySensorHandler {
     }
 
     class SensorFusion extends TimerTask {
-        public void run(){
+        public void run() {
             float oneMinusAlpha = 1f - alpha;
-            if(init){
+            if(init) {
                 fusedOrientation[0] = accOrientation[0];
                 fusedOrientation[1] = accOrientation[1];
                 fusedOrientation[2] = accOrientation[2];
@@ -246,9 +246,6 @@ public class MyAccelerometerHandler extends MySensorHandler {
             // TODO Get calibrated average with the following commented line. Use key "pref_accVar" for the variance.
             // PreferenceManager.getDefaultSharedPreferences(mContext).getFloat("pref_accAvg", "someDefaultValue");
             AccelerometerMeasure result = new AccelerometerMeasure(mTrip, acceleration[1],acceleration[1] - (gyroRotation[7] * 10.12889f), acceleration[1]);
-            if (result == null) {
-                Log.i("sensorFusion", "result is null, acceleration[1]: " + acceleration[1] + " gyroRotation[7]: " + gyroRotation[7]);
-            }
             mCircularQueue.add(result);
             myList.add(result);
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_detectionStyle_entries">
+        <item>Lenient</item>
+        <item>Strict</item>
+    </string-array>
+
+    <string-array name="pref_detectionStyle_values">
+        <item>lenient</item>
+        <item>strict</item>
+    </string-array>
+</resources>

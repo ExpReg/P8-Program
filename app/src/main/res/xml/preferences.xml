@@ -4,9 +4,26 @@
         android:key="pref_sensorFrequency"
         android:title="@string/pref_sensorFrequency"
         android:dialogTitle="@string/pref_sensorFrequency"
-        android:summary="@string/pref_sensorFrequency_summary"
         android:inputType="number"
         android:defaultValue="@string/pref_sensorFrequency_default" />
+    <ListPreference
+        android:key="pref_detectionStyle"
+        android:title="@string/pref_detectionStyle"
+        android:dialogTitle="@string/pref_detectionStyle"
+        android:summary="%s"
+        android:entries="@array/pref_detectionStyle_entries"
+        android:entryValues="@array/pref_detectionStyle_values"
+        android:defaultValue="lenient" />
+    <EditTextPreference
+        android:key="pref_accelerationThreshold"
+        android:title="@string/pref_accelerationThreshold"
+        android:enabled="false">
+    </EditTextPreference>
+    <EditTextPreference
+        android:key="pref_accelerationThreshold"
+        android:title="@string/pref_decelerationThreshold"
+        android:enabled="false">
+    </EditTextPreference>
     <Preference
         android:key="pref_exportDB"
         android:title="@string/pref_exportDB"

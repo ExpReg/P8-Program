@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.example.expreg.p8_program.DB.MySQLiteHelper;
@@ -69,6 +70,15 @@ public class MyPreferenceFragment extends PreferenceFragment implements SharedPr
 
     public void updatePreference (Preference pref) {
         if (pref == null) return;
+        if (pref.getKey().equals("pref_detectionStyle")) {
+            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            if (sharedPrefs.getString("pref_detectionStyle","default").equals("lenient")) {
+                sharedPrefs.edit().putFloat("pref_accelerationThreshold", 3.0f).putFloat("pref_decelerationThreshold", 4.0f).apply();
+            }
+            else if (sharedPrefs.getString("pref_detectionStyle","default").equals("strict")) {
+                sharedPrefs.edit().putFloat("pref_accelerationThreshold", 1.5f).putFloat("pref_decelerationThreshold", 2.0f).apply();
+            }
+        }
         if (pref instanceof EditTextPreference) {
             EditTextPreference editPref = (EditTextPreference) pref;
             pref.setSummary(editPref.getText());

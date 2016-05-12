@@ -3,11 +3,13 @@ package com.example.expreg.p8_program.SensorHandlers;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
@@ -24,8 +26,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MyAccelerometerHandler extends MySensorHandler {
-    protected static double mCutoffAccel = 3;
-    protected static double mCutoffBrake = -3;
+    protected static double mAccelerationThreshold = 3;
+    protected static double mDecelerationThreshold = -3;
     protected View mView;
     protected List<AccelerometerMeasure> myList = new ArrayList<>();
     protected long colourTimer = 0;
@@ -60,6 +62,9 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
     public MyAccelerometerHandler(Context context, GoogleApiClient client) {
         super(context, Sensor.TYPE_ACCELEROMETER, client);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        mAccelerationThreshold = sharedPrefs.getFloat("pref_accelerationThreshold", 3f);
+        mDecelerationThreshold = sharedPrefs.getFloat("pref_decelerationThreshold", 3f);
         mView = ((Activity)mContext).findViewById(R.id.activity_start_trip);
     }
 
@@ -201,8 +206,8 @@ public class MyAccelerometerHandler extends MySensorHandler {
         float diffy = 0;
         if (mCircularQueue.isAtFullCapacity())
             diffy = mCircularQueue.getMax().getAcc_y() - mCircularQueue.getMin().getAcc_y();
-        Log.i("isHardAcceleration", "Diffy is " + diffy);
-        return (diffy > mCutoffAccel || diffy < mCutoffBrake);
+        // TODO: Right now it treats acceleration and deceleration the same
+        return (diffy > mAccelerationThreshold || diffy < mDecelerationThreshold);
     }
 
     public void start(int frequency) {

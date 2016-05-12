@@ -284,7 +284,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
                 mColorBox.setBackgroundColor(0xFF00FF00);
             }
 */
-             strx = "Accelerometer x-axis: " +  (acceleration[1] - (gyroRotation[7] * 10f)) + "\n";
+             strx = "Accelerometer x-axis: " +  (acceleration[1] - (gyroRotation[7] * 10f)) + "\n"; 
              stry = "Accelerometer y-axis: " +  acceleration[1] + "\n";
              strz = "Accelerometer z-axis: " +  acceleration[2];
 

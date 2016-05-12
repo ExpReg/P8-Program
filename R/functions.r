@@ -1,6 +1,5 @@
 library(RSQLite)
 library(functional)
-
 require(RSQLite)
 
 getAllTrips <- function(dbConnection){
@@ -196,8 +195,7 @@ myThing <- function(dataList){
 
 handleValues <- function(data){
   vect <- vector()
-  
-  for(i in 1:length(data)){
+  for(i in 2:length(data)){
     if(i <= 25){
       vect[[i]] <- max(data[1:i]) - min(data[1:i])
     }
@@ -207,6 +205,7 @@ handleValues <- function(data){
   }
   return(vect)
 }
+
 
 
 redoX <- function(data){

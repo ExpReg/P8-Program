@@ -24,9 +24,10 @@ public class MyCircularQueue {
     public AccelerometerMeasure getMin() {
         AccelerometerMeasure min = new AccelerometerMeasure(0, Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
         for (AccelerometerMeasure m : measures) {
-            if (m.getAcc_y() < min.getAcc_y()) {
+            if (m != null && m.getAcc_y() < min.getAcc_y())  {
                 min = m;
             }
+
         }
         return min;
     }
@@ -34,10 +35,7 @@ public class MyCircularQueue {
     public AccelerometerMeasure getMax() {
         AccelerometerMeasure max = new AccelerometerMeasure(0, Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
         for (AccelerometerMeasure m : measures) {
-            if (m == null) {
-                Log.i("getMax", "m is null");
-            }
-            if (m.getAcc_y() > max.getAcc_y()) {
+            if (m != null && m.getAcc_y() > max.getAcc_y()) {
                 max = m;
             }
         }

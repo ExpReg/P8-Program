@@ -186,6 +186,13 @@ plotLines <- function(data){
   }
 }
 
+myThing <- function(dataList){
+  list <- list()
+  for(i in 1:length(dataList[[1]])){
+    list[[i]] <- unlist(lapply(dataList, function(x) x[[i]]))
+  }
+  return(list)
+}
 
 handleValues <- function(data){
   vect <- vector()
@@ -201,6 +208,13 @@ handleValues <- function(data){
   return(vect)
 }
 
+
+redoX <- function(data){
+  before05 <- subset(data,relativeTime < 0.5)
+  applied <- mean(before05[,3])
+  test <- data[,3] - applied
+  return(data.frame(data[,1:2],test,data[,4:8]))
+}
 
 
 duplicatedTime <- function(data){

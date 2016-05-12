@@ -2,60 +2,113 @@ setwd("C:\\Users\\Mads\\Documents\\GitHub\\P8-Program\\R")
 #setwd("C:\\Users\\bjarke\\Desktop\\uni\\aau\\Dat 8\\Projekt\\P8-Program\\R")
 library(RSQLite)
 library(functional)
+library(ggplot2)
 require(RSQLite)
 source("functions.r")
+install.packages("ggplot2")
 
 #connection to database  
-con = dbConnect(SQLite(), dbname="07-04-2016.sqlite")
+con = dbConnect(SQLite(), dbname="1MeterFall.sqlite")
+con2 = dbConnect(SQLite(), dbname ="angleTest.sqlite")
+con3 = dbConnect(SQLite(), dbname = "ParentTrip.sqlite")
 
+
+
+
+#FallTests 
+falls <- getAllTrips(con)
+plotAllInOne(falls[[1]])
+modifiedGraphs <- lapply(falls, modifyTimeLine)
+plotAllInOne(modifiedGraphs[[1]])
+dropSelected <- lapply(modifiedGraphs, selectValues)
+dropSelected <- lapply(dropSelected,function(x) subset(x,relativeTime > 1))
+final <- lapply(dropSelected,duplicatedTime)
+final2 <- lapply(final, filterWihtLowPass)
+
+onlyY <- lapply(final2, function(x) x[,c(2,4)])
+myAproxxes <- lapply(onlyY, function(x) approxfun(x[,1],x[,2]))
+myValues <- lapply(myAproxxes, function(x) unlist(lapply(seq(1,1.36,0.02),x)))
+df <- data.frame(matrix(unlist(myValues), nrow=length(myValues), byrow=T))
+myValues
+plotLines(onlyY)
+
+plot(seq(1,1.36,0.02),meaned,type = "n")
+lines(seq(1,1.36,0.02),meaned)
+
+x_values <-seq(1,1.36,0.02)
+n <-rep(10,length(x_values)) 
+sded <- unlist(sded)
+se <- sded / sqrt(10)
+tgc <- data.frame(x_values,n,meaned,sded,se)
+
+ggplot(tgc, aes(x=x_values, y=meaned)) + 
+  geom_errorbar(aes(ymin=meaned-se, ymax=meaned+se), width=.01) +
+  geom_line() +
+  geom_point()
+
+
+#30 Degrees 
+con = dbConnect(SQLite(), dbname="30Degress.sqlite")
+test <- getAllTrips(con)
+handledRaw <- lapply(test, redoX)
+mean(test[[1]][,3])
+mystuff <- apply(test[[1]][,3:8], 2, redoX)
+firstSet <- handledRaw[[1]]
+
+#mean squraed error 
+sqrt(mean((firstSet[,3] - firstSet[,4])^2))
+#Mean absoulte error 
+mean(abs(firstSet[,8] - firstSet[,3]))
+y1 <- apply(firstSet[,4:8], 2, function(x) mean(abs(x - firstSet[,3])))
+
+angles = getAllTrips(con2)
+plotAllInOne(angles[[1]])
+plotStuff(angles[[1]], "generic", 6)
+firstAngle <- angles[[1]]
+y2<- apply(firstAngle[,4:8], 2, function(x) mean(abs(x - rep(0,length(firstAngle[,3])))))
+x1 <- seq(0.95,0.99,0.01)
+mean(abs(firstAngle[,3] - rep(0,length(firstAngle[,3]))))
+
+
+plot(x1,y1,type = "n")
+lines(x1,y1)
+lines(x1,y2)
+
+
+test1 <- unique(mystuff)
+t.test(test1[,1],test1[,2])
 tripNr <-7 
 
-#Queries 
-dates <- dbGetQuery(con,paste("SELECT created_at FROM sensor WHERE trip =", tripNr,sep = ""))
-accerlationAxes <-  dbGetQuery(con,paste("SELECT acc_x,acc_z, acc_y FROM sensor WHERE trip = ",tripNr,sep = ""))
-
-#Convertetimestamp to numbers (apply is map )
-convertedDates <- apply(dates,1,function(x) as.numeric(strptime(x, "%Y-%m-%d %H:%M:%OS")))
-op <- options(digits.secs=3)
-
-#The timestamps relative to the start time 
-timeRelativetoStart = round(convertedDates - convertedDates[1],digits = 3)
-
-x_values <- accerlationAxes[[1]]
-y_values <- accerlationAxes[[3]]
-z_values <- accerlationAxes[[2]]
-
-##HAVE A DEMONSTRATION BJARKE (run the the whole thing then these plots/remember to run functions first)
-filtered <- SMA(y_values,50)
-filtertimeRelativetoStart <- timeRelativetoStart[seq(15,length(timeRelativetoStart),15)]
-plot(timeRelativetoStart,y_values, xlab = "Time \n s", ylab = "acceleration  m/s^2",main = "y-axis")
-plot(timeRelativetoStart,filtered, xlab = "Time \n s", ylab = "acceleration  m/s^2",main = "y-axis")
-###################################
-
-#defing main dataframe with for full interval
-myDataFrame <- data.frame(timeRelativetoStart, y_values)
-#dataFrame for interval: 300 to 420 sec
-dataFrame300To420 <- myDataFrame[myDataFrame$timeRelativetoStart > 300 & 
-                                myDataFrame$timeRelativetoStart < 420,]
-plot(dataFrame300To420)
-#total accerlation for all axes
-allAxes <- sqrt(x_values^2 + y_values^2 + z_values^2)
-#x-axis 
-plot(timeRelativetoStart,x_values, xlab = "Time \n s", ylab = "acceleration  m/s^2",main = "x-axis")
-#y-axis
-plot(timeRelativetoStart,y_values, ylim=c(-2,2), xlab = "Time \n s", ylab = "acceleration  m/s^2",main = "y-axis")
-#z-axis
-plot(timeRelativetoStart,z_values, xlab = "Time \n s", ylab = "acceleration  m/s^2",main = "z-axis")
-#Plot for allAxes 
-plot(timeRelativetoStart,allAxes, xlab = "Time \n s", ylab = "acceleration  m/s^2",main = "AllAxes",xlim = c(0,3))
 
 
-myConnection <- dbConnect(SQLite(), dbname="dunno.sqlite")
 
-allTrips <- getAllTrips(myConnection)
-OneMeter <- allTrips[c(1,2,3,4,6)]
-Meter125 <- allTrips[c(8,9,10,11,12)]
-Meter150 <- allTrips[c(13,14,15,16,17)]
+test <- function(data){
+vect <- vector()
+  for(i in 1:length(data)){
+    if(i <= 75){
+       vect[[i]] <- max(data[1:i]) - min(data[1:i])
+    }
+    else{
+      vect[[i]] <- max(data[(i-74):i]) - min(data[(i-74):i]) 
+    }
+  }
+  return(vect) 
+}
+
+plotLines <- function(data){
+  plot(data[[1]],type = "n", ylim = c(-0.1,0.5),xlim = c(0.9,1.5))
+  color <- c("black","blue","green","red","greenyellow")
+  
+  legend( x= "topright", y=0.92, 
+          legend=c("1","2", "3", "4","5"), 
+          col=c("black", "blue", "green", "red","greenyellow"),   
+          pch=15)
+  
+  for(i in 1:length(data)){
+    lines(data[[i]],col = color[[i]])
+  }
+ 
+}
 
 #btc 14042016: get falltimes and show them in a latex table
 allTrips <- lapply(allTrips, unique)

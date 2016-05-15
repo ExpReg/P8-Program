@@ -1,6 +1,5 @@
 package com.example.expreg.p8_program.Activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -9,9 +8,9 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
+import com.example.expreg.p8_program.Constants;
 import com.example.expreg.p8_program.DB.MySQLiteHelper;
 import com.example.expreg.p8_program.R;
 
@@ -33,10 +32,10 @@ public class MyPreferenceFragment extends PreferenceFragment implements SharedPr
                 String val = (String) newValue;
                 SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 if (val.equals("lenient")) {
-                    sharedPrefs.edit().putFloat("pref_accelerationThreshold", 3.0f).putFloat("pref_decelerationThreshold", 4.0f).apply();
+                    sharedPrefs.edit().putFloat("pref_accelerationThreshold", Constants.ACCELERATION_THRESHOLD_LENIENT).putFloat("pref_decelerationThreshold", Constants.DECELERATION_THRESHOLD_LENIENT).apply();
                 }
                 else if (val.equals("strict")) {
-                    sharedPrefs.edit().putFloat("pref_accelerationThreshold", 1.5f).putFloat("pref_decelerationThreshold", 2.0f).apply();
+                    sharedPrefs.edit().putFloat("pref_accelerationThreshold", Constants.ACCELERATION_THRESHOLD_STRICT).putFloat("pref_decelerationThreshold", Constants.DECELERATION_THRESHOLD_STRICT).apply();
                 }
                 return true;
             }

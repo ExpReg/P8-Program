@@ -11,9 +11,11 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 
+import com.example.expreg.p8_program.Constants;
 import com.example.expreg.p8_program.Model.AccelerometerMeasure;
 import com.example.expreg.p8_program.R;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -26,13 +28,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MyAccelerometerHandler extends MySensorHandler {
-    protected static double mAccelerationThreshold = 3;
-    protected static double mDecelerationThreshold = -3;
+    protected static double mAccelerationThreshold;
+    protected static double mDecelerationThreshold;
     protected View mView;
     protected List<AccelerometerMeasure> myList = new ArrayList<>();
-    protected long colourTimer = 0;
-    protected long redTime = 5000000000L;
-    protected boolean accelerating = false;
+    protected long mColourTimer = 0;
+    protected boolean mAccelerating = false;
     protected Location lastKnownLocation = null;
     private Timer timer = new Timer();
     public static int time = 40;
@@ -54,7 +55,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
     private final float[] deltaRotationVector = new float[4];
     private float timestamp = 0;
 
-    protected  int test = 1;
+    protected int test = 1;
 
     public MyAccelerometerHandler(Context context) {
         this(context, null);
@@ -63,8 +64,8 @@ public class MyAccelerometerHandler extends MySensorHandler {
     public MyAccelerometerHandler(Context context, GoogleApiClient client) {
         super(context, Sensor.TYPE_ACCELEROMETER, client);
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-        mAccelerationThreshold = sharedPrefs.getFloat("pref_accelerationThreshold", 3f);
-        mDecelerationThreshold = sharedPrefs.getFloat("pref_decelerationThreshold", 3f);
+        mAccelerationThreshold = sharedPrefs.getFloat("pref_accelerationThreshold", Constants.ACCELERATION_THRESHOLD_LENIENT);
+        mDecelerationThreshold = sharedPrefs.getFloat("pref_decelerationThreshold", Constants.DECELERATION_THRESHOLD_LENIENT);
         mView = ((Activity)mContext).findViewById(R.id.activity_start_trip);
     }
 
@@ -182,23 +183,27 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
     private void handleAcceleration() {
         if (isHardAcceleration()) {
-            colourTimer = System.nanoTime();
-            mView.setBackgroundColor(0xFFFF0000);
-            if (!accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
-                accelerating = true;
-                lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                // TODO: Determine if it is acceleration or deceleration
-                mDb.addDetection(mTrip, lastKnownLocation, "Acceleration/Deceleration Start", new Date().toString());
+            if (!mAccelerating)  {
+                mAccelerating = true;
+                if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    // TODO: Determine if it is acceleration or deceleration
+                    mDb.addDetection(mTrip, lastKnownLocation, "Acceleration/Deceleration Start", new Date().toString());
+                }
             }
-        } else if (accelerating && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)  == PackageManager.PERMISSION_GRANTED) {
-            accelerating = false;
-            lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            mDb.addDetection(mTrip, lastKnownLocation, "Acceleration/Deceleration End", new Date().toString());
+        } else if (mAccelerating) {
+            mAccelerating = false;
+            mColourTimer = System.nanoTime();
+            mView.setBackgroundColor(ContextCompat.getColor(mContext,R.color.colorHardAcceleration));
+            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                mDb.addDetection(mTrip, lastKnownLocation, "Acceleration/Deceleration End", new Date().toString());
+            }
         }
 
-        if (System.nanoTime() - colourTimer > redTime) {
-            colourTimer = 0;
-            mView.setBackgroundColor(0xFF00FF00);
+        if (System.nanoTime() - mColourTimer > Constants.TIME_AS_RED) {
+            mColourTimer = 0;
+            mView.setBackgroundColor(ContextCompat.getColor(mContext,R.color.colorNoAcceleration));
         }
     }
 
@@ -213,7 +218,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
     public void start(int frequency) {
         super.start(frequency);
         this.myList.clear();
-        this.accelerating = false;
+        this.mAccelerating = false;
         timer = new Timer();
         timer.scheduleAtFixedRate(new SensorFusion(),1000,time);
     }
@@ -223,7 +228,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
         super.stop();
         timer.cancel();
         timer.purge();
-        mView.setBackgroundColor(0xFF00FF00);
+        mView.setBackgroundColor(ContextCompat.getColor(mContext,R.color.colorNoAcceleration));
         init = true;
     }
 

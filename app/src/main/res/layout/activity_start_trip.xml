@@ -19,7 +19,7 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="com.example.expreg.p8_program.Activities.StartTripActivity"
-        android:background="#00FF00">
+        android:background="@color/colorNoAcceleration">
 
         <Button
             android:id="@+id/stopTripButton"

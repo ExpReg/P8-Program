@@ -9,7 +9,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -196,6 +198,11 @@ public class MyAccelerometerHandler extends MySensorHandler {
             mAccelerating = false;
             mColourTimer = System.nanoTime();
             mView.setBackgroundColor(ContextCompat.getColor(mContext,R.color.colorHardAcceleration));
+            // TODO: Maybe add a different sound. Can use DEFAULT_RINGTONE_URI or DEFAULT_NOTIFICATION_URI.
+            // TODO: If we want a custom sound, create a raw directory in the res folder, and add custom sound files there.
+            MediaPlayer player = MediaPlayer.create(mContext, Settings.System.DEFAULT_ALARM_ALERT_URI);
+            player.start();
+
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                 mDb.addDetection(mTrip, lastKnownLocation, mDetectionType + " End", new Date().toString());

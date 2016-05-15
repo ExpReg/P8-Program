@@ -34,6 +34,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
     protected List<AccelerometerMeasure> myList = new ArrayList<>();
     protected long mColourTimer = 0;
     protected boolean mAccelerating = false;
+    protected String mDetectionType;
     protected Location lastKnownLocation = null;
     private Timer timer = new Timer();
     public static int time = 40;
@@ -185,10 +186,10 @@ public class MyAccelerometerHandler extends MySensorHandler {
         if (isHardAcceleration()) {
             if (!mAccelerating)  {
                 mAccelerating = true;
+                mDetectionType = detectionType();
                 if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                    // TODO: Determine if it is acceleration or deceleration
-                    mDb.addDetection(mTrip, lastKnownLocation, "Acceleration/Deceleration Start", new Date().toString());
+                    mDb.addDetection(mTrip, lastKnownLocation, mDetectionType + " Start", new Date().toString());
                 }
             }
         } else if (mAccelerating) {
@@ -197,7 +198,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
             mView.setBackgroundColor(ContextCompat.getColor(mContext,R.color.colorHardAcceleration));
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                mDb.addDetection(mTrip, lastKnownLocation, "Acceleration/Deceleration End", new Date().toString());
+                mDb.addDetection(mTrip, lastKnownLocation, mDetectionType + " End", new Date().toString());
             }
         }
 
@@ -210,9 +211,23 @@ public class MyAccelerometerHandler extends MySensorHandler {
     private boolean isHardAcceleration() {
         float diffy = 0;
         if (mCircularQueue.isAtFullCapacity())
-            diffy = mCircularQueue.getMax().getAcc_y() - mCircularQueue.getMin().getAcc_y();
-        // TODO: Right now it treats acceleration and deceleration the same
-        return (diffy > mAccelerationThreshold || diffy < mDecelerationThreshold);
+            diffy = Math.abs(mCircularQueue.getMax().getAcc_y() - mCircularQueue.getMin().getAcc_y());
+        if (detectionType().equals("Acceleration")) {
+            return diffy > mAccelerationThreshold;
+        }
+        else {
+            return diffy > mDecelerationThreshold;
+        }
+    }
+
+    // TODO: Find better way to detect if acceleration or deceleration.
+    private String detectionType() {
+        if (mCircularQueue.getMax().getAcc_y() > 0 && mCircularQueue.getMin().getAcc_y() > 0) {
+            return "Acceleration";
+        }
+        else {
+            return "Deceleration";
+        }
     }
 
     public void start(int frequency) {

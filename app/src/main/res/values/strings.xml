@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">P8-Program</string>
+    <string name="app_name">AcceleratOr</string>
     <string name="settings_button_text">Settings</string>
     <string name="startTrip_button_text">Start Trip</string>
     <string name="stopTrip_button_text">Stop Trip</string>

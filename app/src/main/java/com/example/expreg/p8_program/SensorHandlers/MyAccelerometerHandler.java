@@ -216,20 +216,26 @@ public class MyAccelerometerHandler extends MySensorHandler {
     }
 
     private boolean isHardAcceleration() {
-        float diffy = 0;
-        if (mCircularQueue.isAtFullCapacity())
-            diffy = Math.abs(mCircularQueue.getMax().getAcc_y() - mCircularQueue.getMin().getAcc_y());
+        if (!mCircularQueue.isAtFullCapacity()) {
+            return false;
+        }
+
         if (detectionType().equals("Acceleration")) {
-            return diffy > mAccelerationThreshold;
+            return Math.abs(mCircularQueue.getMax().getAcc_y()) > mAccelerationThreshold;
+        }
+        else if (detectionType().equals("Deceleration")){
+            return Math.abs(mCircularQueue.getMin().getAcc_y()) > mDecelerationThreshold;
         }
         else {
-            return diffy > mDecelerationThreshold;
+            return false;
         }
     }
 
-    // TODO: Find better way to detect if acceleration or deceleration.
     private String detectionType() {
-        if (mCircularQueue.getMax().getAcc_y() > 0 && mCircularQueue.getMin().getAcc_y() > 0) {
+        float max_y = mCircularQueue.getMax().getAcc_y();
+        float min_y = mCircularQueue.getMin().getAcc_y();
+
+        if (Math.abs(max_y) > Math.abs(min_y)) {
             return "Acceleration";
         }
         else {

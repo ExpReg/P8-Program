@@ -199,7 +199,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
             mView.setBackgroundColor(ContextCompat.getColor(mContext,R.color.colorHardAcceleration));
             // TODO: Maybe add a different sound. Can use DEFAULT_RINGTONE_URI or DEFAULT_NOTIFICATION_URI.
             // TODO: If we want a custom sound, create a raw directory in the res folder, and add custom sound files there.
-            MediaPlayer player = MediaPlayer.create(mContext, Settings.System.DEFAULT_ALARM_ALERT_URI);
+            MediaPlayer player = MediaPlayer.create(mContext, Settings.System.DEFAULT_NOTIFICATION_URI);
             player.start();
 
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {

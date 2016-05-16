@@ -316,10 +316,11 @@ public class MyAccelerometerHandler extends MySensorHandler {
             System.arraycopy(fusedOrientation, 0, gyroOrientation, 0, 3);
             Log.d("SensorChanged", "Sensor has changed");
 
+            float[] filter = lowPassFilter(new float[]{acceleration[2],acceleration[2] - (gyroRotation[8] * 10f),acceleration[0]}, mOutput);
             // TODO Get calibrated average with the following commented line. Use key "pref_accVar" for the variance.
             // PreferenceManager.getDefaultSharedPreferences(mContext).getFloat("pref_accAvg", "someDefaultValue");
-            AccelerometerMeasure result = new AccelerometerMeasure(mTrip, acceleration[1] - (gyroRotation[6] * 10.12889f),acceleration[1] - (gyroRotation[7] * 10.12889f),
-                    acceleration[1] - (gyroRotation[8] * 10.12889f));
+            AccelerometerMeasure result = new AccelerometerMeasure(mTrip,filter[0],filter[1],filter[2]);
+               ;
             mCircularQueue.add(result);
             myList.add(result);
             act.runOnUiThread(new Runnable() {

@@ -241,9 +241,43 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
             for(int i = 0; i < 5; i++ ){
                 float oneMinusAlpha = 1f - alphas[i];
-                fusedOrientations.get(i)[0] =  alphas[i] * gyroOrientations.get(i)[0] + oneMinusAlpha * accOrientation[0];
-                fusedOrientations.get(i)[1] =  alphas[i] * gyroOrientations.get(i)[1] + oneMinusAlpha * accOrientation[1];
-                fusedOrientations.get(i)[2] =  alphas[i] * gyroOrientations.get(i)[2] + oneMinusAlpha * accOrientation[2];
+
+                if (gyroOrientations.get(i)[0] < -0.5 * Math.PI && accOrientation[0] > 0.0) {
+                    fusedOrientations.get(i)[0]= (float) (alphas[i] * (gyroOrientations.get(i)[0]+ 2.0 * Math.PI) + oneMinusAlpha * accOrientation[0]);
+                    fusedOrientations.get(i)[0] -= (fusedOrientations.get(i)[0]> Math.PI) ? 2.0 * Math.PI : 0;
+                }
+                else if (accOrientation[0] < -0.5 * Math.PI && gyroOrientations.get(i)[0]> 0.0) {
+                    fusedOrientations.get(i)[0]= (float) (alphas[i] * gyroOrientations.get(i)[0] + oneMinusAlpha * (accOrientation[0] + 2.0 * Math.PI));
+                    fusedOrientations.get(i)[0] -= (fusedOrientations.get(i)[0] > Math.PI)? 2.0 * Math.PI : 0;
+                }
+                else {
+                    fusedOrientations.get(i)[0] = alphas[i] * gyroOrientations.get(i)[0]+ oneMinusAlpha * accOrientation[0];
+                }
+
+                if (gyroOrientations.get(i)[1] < -0.5 * Math.PI && accOrientation[1] > 0.0) {
+                    fusedOrientations.get(i)[1] = (float) (alphas[i] * (gyroOrientations.get(i)[1] + 2.0 * Math.PI) + oneMinusAlpha * accOrientation[1]);
+                    fusedOrientations.get(i)[1] -= (fusedOrientations.get(i)[1] > Math.PI) ? 2.0 * Math.PI : 0;
+                }
+                else if (accOrientation[1] < -0.5 * Math.PI && gyroOrientations.get(i)[1] > 0.0) {
+                    fusedOrientations.get(i)[1] = (float) (alphas[i] * gyroOrientations.get(i)[1] + oneMinusAlpha * (accOrientation[1] + 2.0 * Math.PI));
+                    fusedOrientations.get(i)[1] -= (fusedOrientations.get(i)[1] > Math.PI)? 2.0 * Math.PI : 0;
+                }
+                else {
+                    fusedOrientations.get(i)[1] = alphas[i] * gyroOrientations.get(i)[1] + oneMinusAlpha * accOrientation[1];
+                }
+
+                if ( gyroOrientations.get(i)[2]< -0.5 * Math.PI && accOrientation[2] > 0.0) {
+                    fusedOrientations.get(i)[2] = (float) (alphas[i] * ( gyroOrientations.get(i)[2] + 2.0 * Math.PI) + oneMinusAlpha * accOrientation[2]);
+                    fusedOrientations.get(i)[2] -= (fusedOrientations.get(i)[2] > Math.PI) ? 2.0 * Math.PI : 0;
+                }
+                else if (accOrientation[2] < -0.5 * Math.PI &&  gyroOrientations.get(i)[2] > 0.0) {
+                    fusedOrientations.get(i)[2]= (float) (alphas[i] *  gyroOrientations.get(i)[2] + oneMinusAlpha * (accOrientation[2] + 2.0 * Math.PI));
+                    fusedOrientations.get(i)[2] -= (fusedOrientations.get(i)[2] > Math.PI)? 2.0 * Math.PI : 0;
+                }
+                else {
+                    fusedOrientations.get(i)[2]= alphas[i] *  gyroOrientations.get(i)[2]+ oneMinusAlpha * accOrientation[2];
+                }
+
                 gyroRotations.set(i,getRotationMatrixFromOrientation(fusedOrientations.get(i)));
                 System.arraycopy(fusedOrientations.get(i), 0, gyroOrientations.get(i), 0, 3);
             }

@@ -1,5 +1,6 @@
 package com.example.expreg.p8_program.SensorHandlers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
@@ -18,6 +19,7 @@ public abstract class MySensorHandler implements SensorEventListener {
     protected Context mContext = null;
     protected float[] mOutput;
     protected int mTrip = 0;
+    protected Activity act = null;
 
     public MySensorHandler(Context context, int sensorType) {
         this(context, sensorType, null);
@@ -25,6 +27,7 @@ public abstract class MySensorHandler implements SensorEventListener {
 
     public MySensorHandler(Context context, int sensorType, GoogleApiClient client) {
         mContext = context;
+        act = (Activity) context;
         mDb = MySQLiteHelper.getInstance(context);
         mCircularQueue = new MyCircularQueue(25);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);

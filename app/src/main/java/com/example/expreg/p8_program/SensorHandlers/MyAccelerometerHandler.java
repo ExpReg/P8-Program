@@ -77,12 +77,11 @@ public class MyAccelerometerHandler extends MySensorHandler {
         switch (event.sensor.getType()){
             case Sensor.TYPE_ACCELEROMETER:
                 System.arraycopy(event.values, 0, acceleration, 0, 3);
-                if(SensorManager.getRotationMatrix(accRotationmatrix,null,acceleration,magnetic)){
-                    SensorManager.getRotationMatrix(accRotationmatrix,null,acceleration,magnetic);
+                if(SensorManager.getRotationMatrix(accRotationmatrix,null,acceleration,magnetic)) {
+                    SensorManager.getRotationMatrix(accRotationmatrix, null, acceleration, magnetic);
                     accOrientation = new float[3];
                     SensorManager.getOrientation(accRotationmatrix, accOrientation);
                 }
-                handleAcceleration();
                 break;
 
             case Sensor.TYPE_GYROSCOPE:
@@ -205,6 +204,8 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                Boolean hej = mGoogleApiClient.isConnected();
+                Log.d("boolean", hej.toString() );
                 mDb.addDetection(mTrip, lastKnownLocation, mDetectionType + " End", new Date().toString());
             }
         }
@@ -318,10 +319,15 @@ public class MyAccelerometerHandler extends MySensorHandler {
             // TODO Get calibrated average with the following commented line. Use key "pref_accVar" for the variance.
             // PreferenceManager.getDefaultSharedPreferences(mContext).getFloat("pref_accAvg", "someDefaultValue");
             AccelerometerMeasure result = new AccelerometerMeasure(mTrip, acceleration[1] - (gyroRotation[6] * 10.12889f),acceleration[1] - (gyroRotation[7] * 10.12889f),
-                                                                   acceleration[1] - (gyroRotation[8] * 10.12889f));
+                    acceleration[1] - (gyroRotation[8] * 10.12889f));
             mCircularQueue.add(result);
             myList.add(result);
-
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    handleAcceleration();
+                }
+            });
             if (myList.size() >= 10) {
                 mDb.addMeasures(myList);
                 myList.clear();

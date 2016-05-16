@@ -267,9 +267,43 @@ public class MyAccelerometerHandler extends MySensorHandler {
                 return;
             }
 
-            fusedOrientation[0] = alpha * gyroOrientation[0] + oneMinusAlpha * accOrientation[0];
-            fusedOrientation[1] = alpha * gyroOrientation[1] + oneMinusAlpha * accOrientation[1];
-            fusedOrientation[2] = alpha * gyroOrientation[2] + oneMinusAlpha * accOrientation[2];
+            // TAKEN FROM http://plaw.info/2012/03/android-sensor-fusion-tutorial/
+            if (gyroOrientation[0] < -0.5 * Math.PI && accOrientation[0] > 0.0) {
+                fusedOrientation[0]= (float) (alpha * (gyroOrientation[0]+ 2.0 * Math.PI) + oneMinusAlpha * accOrientation[0]);
+                fusedOrientation[0] -= (fusedOrientation[0]> Math.PI) ? 2.0 * Math.PI : 0;
+            }
+            else if (accOrientation[0] < -0.5 * Math.PI && gyroOrientation[0]> 0.0) {
+                fusedOrientation[0] = (float) (alpha * gyroOrientation[0] + oneMinusAlpha * (accOrientation[0] + 2.0 * Math.PI));
+                fusedOrientation[0] -= (fusedOrientation[0] > Math.PI)? 2.0 * Math.PI : 0;
+            }
+            else {
+                fusedOrientation[0] = alpha * gyroOrientation[0]+ oneMinusAlpha * accOrientation[0];
+            }
+
+            if (gyroOrientation[1] < -0.5 * Math.PI && accOrientation[1] > 0.0) {
+                fusedOrientation[1] = (float) (alpha * (gyroOrientation[1] + 2.0 * Math.PI) + oneMinusAlpha * accOrientation[1]);
+                fusedOrientation[1] -= (fusedOrientation[1] > Math.PI) ? 2.0 * Math.PI : 0;
+            }
+            else if (accOrientation[1] < -0.5 * Math.PI && gyroOrientation[1] > 0.0) {
+                fusedOrientation[1] = (float) (alpha * gyroOrientation[1] + oneMinusAlpha * (accOrientation[1] + 2.0 * Math.PI));
+                fusedOrientation[1] -= (fusedOrientation[1] > Math.PI)? 2.0 * Math.PI : 0;
+            }
+            else {
+                fusedOrientation[1] = alpha * gyroOrientation[1] + oneMinusAlpha * accOrientation[1];
+            }
+
+            if (gyroOrientation[2]< -0.5 * Math.PI && accOrientation[2] > 0.0) {
+                fusedOrientation[2] = (float) (alpha * ( gyroOrientation[2] + 2.0 * Math.PI) + oneMinusAlpha * accOrientation[2]);
+                fusedOrientation[2] -= (fusedOrientation[2] > Math.PI) ? 2.0 * Math.PI : 0;
+            }
+            else if (accOrientation[2] < -0.5 * Math.PI &&  gyroOrientation[2] > 0.0) {
+                fusedOrientation[2]= (float) (alpha * gyroOrientation[2] + oneMinusAlpha * (accOrientation[2] + 2.0 * Math.PI));
+                fusedOrientation[2] -= (fusedOrientation[2] > Math.PI)? 2.0 * Math.PI : 0;
+            }
+            else {
+                fusedOrientation[2]= alpha * gyroOrientation[2]+ oneMinusAlpha * accOrientation[2];
+            }
+
 
             gyroRotation = getRotationMatrixFromOrientation(fusedOrientation);
             System.arraycopy(fusedOrientation, 0, gyroOrientation, 0, 3);
@@ -277,7 +311,8 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
             // TODO Get calibrated average with the following commented line. Use key "pref_accVar" for the variance.
             // PreferenceManager.getDefaultSharedPreferences(mContext).getFloat("pref_accAvg", "someDefaultValue");
-            AccelerometerMeasure result = new AccelerometerMeasure(mTrip, acceleration[1],acceleration[1] - (gyroRotation[7] * 10.12889f), acceleration[1]);
+            AccelerometerMeasure result = new AccelerometerMeasure(mTrip, acceleration[1] - (gyroRotation[6] * 10.12889f),acceleration[1] - (gyroRotation[7] * 10.12889f),
+                                                                   acceleration[1] - (gyroRotation[8] * 10.12889f));
             mCircularQueue.add(result);
             myList.add(result);
 

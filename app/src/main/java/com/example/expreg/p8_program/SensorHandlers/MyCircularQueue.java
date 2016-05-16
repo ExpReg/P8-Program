@@ -14,14 +14,14 @@ public class MyCircularQueue {
         measures = new CircularFifoQueue<>(size);
     }
 
-    public void add(AccelerometerMeasure measure) {
+    public synchronized void add(AccelerometerMeasure measure) {
         if (measure == null) {
             Log.i("addQueue", "measure is null");
         }
         measures.add(measure);
     }
 
-    public AccelerometerMeasure getMin() {
+    public synchronized AccelerometerMeasure getMin() {
         AccelerometerMeasure min = new AccelerometerMeasure(0, Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
         for (AccelerometerMeasure m : measures) {
             if (m != null && m.getAcc_y() < min.getAcc_y())  {
@@ -32,7 +32,7 @@ public class MyCircularQueue {
         return min;
     }
 
-    public AccelerometerMeasure getMax() {
+    public synchronized AccelerometerMeasure getMax() {
         AccelerometerMeasure max = new AccelerometerMeasure(0, Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
         for (AccelerometerMeasure m : measures) {
             if (m != null && m.getAcc_y() > max.getAcc_y()) {
@@ -42,7 +42,7 @@ public class MyCircularQueue {
         return max;
     }
 
-    public AccelerometerMeasure getAverage() {
+    public synchronized AccelerometerMeasure getAverage() {
         float avgx = 0, avgy = 0, avgz = 0;
 
         for (AccelerometerMeasure m : measures) {
@@ -56,7 +56,7 @@ public class MyCircularQueue {
         return new AccelerometerMeasure(0, avgx / size, avgy / size, avgz / size);
     }
 
-    public AccelerometerMeasure getVariance() {
+    public synchronized AccelerometerMeasure getVariance() {
         float varx = 0, vary = 0, varz = 0;
         AccelerometerMeasure avg = this.getAverage();
 
@@ -71,11 +71,11 @@ public class MyCircularQueue {
         return new AccelerometerMeasure(0, varx / size, vary / size, varz / size);
     }
 
-    public int size() {
+    public synchronized int size() {
         return measures.size();
     }
 
-    public boolean isAtFullCapacity() {
+    public synchronized boolean isAtFullCapacity() {
         return measures.isAtFullCapacity();
     }
 }

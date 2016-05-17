@@ -34,8 +34,8 @@ getTrip <- function(dbconnection,tripNr){
   op <- options(digits.secs=3)
   relativeTime = round(convertedDates - convertedDates[1],digits = 3)
   
-  #Handle accerlation 
-  accerlationAxes <-  dbGetQuery(dbconnection,paste("SELECT acc_x,acc_y,acc_z,acc_97,acc_98,acc_99 FROM sensor WHERE trip = ",tripNr,sep = ""))
+  #Handle accerlation,acc_97,acc_98,acc_99 
+  accerlationAxes <-  dbGetQuery(dbconnection,paste("SELECT acc_x,acc_y,acc_z FROM sensor WHERE trip = ",tripNr,sep = ""))
   x_values <- accerlationAxes[[1]]
   y_values <- accerlationAxes[[3]]
   z_values <- accerlationAxes[[2]]
@@ -88,7 +88,7 @@ filterDataFrame <- function(data,k){
 
 filterWihtLowPass <- function(data){
   time <- data[c(1,2)]
-  data <- data[3:6]
+  data <- data[3:5]
   filteredData <- apply(data,2,function(x) lowPassFilter(x))
   return(data.frame(time,filteredData))
 }
@@ -196,11 +196,11 @@ myThing <- function(dataList){
 handleValues <- function(data){
   vect <- vector()
   for(i in 2:length(data)){
-    if(i <= 25){
+    if(i <= 100){
       vect[[i]] <- max(data[1:i]) - min(data[1:i])
     }
     else{
-      vect[[i]] <- max(data[(i-25):i]) - min(data[(i-25):i])
+      vect[[i]] <- max(data[(i-100):i]) - min(data[(i-100):i])
     }
   }
   return(vect)

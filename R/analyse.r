@@ -8,17 +8,81 @@ source("functions.r")
 install.packages("ggplot2")
 
 #connection to database  
-con = dbConnect(SQLite(), dbname="1MeterFall.sqlite")
+con = dbConnect(SQLite(),  dbname="1MeterFall.sqlite")
 con2 = dbConnect(SQLite(), dbname ="angleTest.sqlite")
 con3 = dbConnect(SQLite(), dbname = "ParentTrip.sqlite")
+con4 = dbConnect(SQLite(), dbname ="15-05.sqlite")
+con5 = dbConnect(SQLite(), dbname = "parkinglot.sqlite")
+
+lol <- getAllTrips(con5)
+lol <- lapply(lol,filterWihtLowPass)
+lol<-lapply(lol, function(x) subset(x,relativeTime < 10))
+hard <- lol[1:6]
+soft <- lol[7:12]
+moderate <- lol[12:17]
+
+softs <- lapply(soft, function(x) max(x[,4]) -2.4 )
+mean(unlist(softs))
 
 
+moderates <- lapply(moderate,function(x) max(x[,4]) - 2.4)
+mean(unlist(moderates))
+
+ploty(soft[[1]])
+
+
+hard <- lapply(hard,function(x) handleValues(x[,4]))
+hards <- lapply(hard[2:6],function(x)max(x,na.rm = TRUE))
+mean(unlist(hards))
+
+#sundayTrip
+
+tripper <- getAllTrips(con4)
+lowpassed <- filterWihtLowPass(tripper[[1]])
+from1307To1312 <- subset(lowpassed,relativeTime < 25*60 & relativeTime > 17 * 60)
+plotStuff(from1307To1312,"97", 6)
+plotx(from1307To1312)
+
+
+from <- subset(from1307To1312,relativeTime >1220 & relativeTime < 1250)
+plotStuff(from,"97", 8)
+plotx(from)
+from[nrow(from),]
+
+aggrDriving <- subset(lowpassed,relativeTime > 33*60 & relativeTime < 38 * 60)
+plotStuff(aggrDriving,"97", 8)
+plotx(aggrDriving)
+
+from2250 <- subset(aggrDriving,relativeTime > 2250 & relativeTime < 2265 )
+plotStuff(from2250,"97", 8)
+plotx(from2250)
+from2250
+
+
+from2030 <- subset(aggrDriving,relativeTime > 2030 & relativeTime < 2065)
+plotStuff(from2030,"97", 8)
+plotx(from2030)
+from2250
+
+from2150 <- subset(aggrDriving,relativeTime > 2100 & relativeTime <2150)
+plotStuff(from2150,"97", 8)
+plotx(from2150)
 
 
 #FallTests 
 falls <- getAllTrips(con)
 plotAllInOne(falls[[1]])
-modifiedGraphs <- lapply(falls, modifyTimeLine)
+modifiedGraphs <- lapply(fa
+LIVE
+ 
+
+
+
+
+
+
+
+lls, modifyTimeLine)
 plotAllInOne(modifiedGraphs[[1]])
 dropSelected <- lapply(modifiedGraphs, selectValues)
 dropSelected <- lapply(dropSelected,function(x) subset(x,relativeTime > 1))

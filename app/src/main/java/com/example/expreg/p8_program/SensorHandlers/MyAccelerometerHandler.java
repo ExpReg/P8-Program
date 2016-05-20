@@ -50,7 +50,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
     protected float[] accOrientation = null;
     protected float[] gyroOrientation = new float[3];
     protected float[] fusedOrientation = new float[9];
-    protected float alpha = 0.97f;
+    protected float alpha = 0.99f;
     protected boolean init = true;
 
     //Taken from the ANDROID TURTORIAL http://developer.android.com/guide/topics/sensors/sensors_motion.html#sensors-motion-gyro
@@ -316,10 +316,10 @@ public class MyAccelerometerHandler extends MySensorHandler {
             System.arraycopy(fusedOrientation, 0, gyroOrientation, 0, 3);
             Log.d("SensorChanged", "Sensor has changed");
 
-            float[] filter = lowPassFilter(new float[]{acceleration[2],acceleration[2] - (gyroRotation[8] * 10f),acceleration[0]}, mOutput);
+            mOutput = lowPassFilter(new float[]{acceleration[2], acceleration[2] - (gyroRotation[8] * 9.67f), acceleration[0]}, mOutput);
             // TODO Get calibrated average with the following commented line. Use key "pref_accVar" for the variance.
             // PreferenceManager.getDefaultSharedPreferences(mContext).getFloat("pref_accAvg", "someDefaultValue");
-            AccelerometerMeasure result = new AccelerometerMeasure(mTrip,filter[0],filter[1],filter[2]);
+            AccelerometerMeasure result = new AccelerometerMeasure(mTrip,mOutput[0],mOutput[1],mOutput[2]);
                ;
             mCircularQueue.add(result);
             myList.add(result);

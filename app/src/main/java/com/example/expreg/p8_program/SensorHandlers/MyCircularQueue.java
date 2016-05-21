@@ -22,7 +22,7 @@ public class MyCircularQueue {
     }
 
     public synchronized AccelerometerMeasure getMin() {
-        AccelerometerMeasure min = new AccelerometerMeasure(0, Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
+        AccelerometerMeasure min = new AccelerometerMeasure(0, Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE,0f,0f,0f);
         for (AccelerometerMeasure m : measures) {
             if (m != null && m.getAcc_y() < min.getAcc_y())  {
                 min = m;
@@ -33,7 +33,7 @@ public class MyCircularQueue {
     }
 
     public synchronized AccelerometerMeasure getMax() {
-        AccelerometerMeasure max = new AccelerometerMeasure(0, Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
+        AccelerometerMeasure max = new AccelerometerMeasure(0, Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE,0f,0f,0f);
         for (AccelerometerMeasure m : measures) {
             if (m != null && m.getAcc_y() > max.getAcc_y()) {
                 max = m;
@@ -53,7 +53,7 @@ public class MyCircularQueue {
 
         int size = measures.size();
 
-        return new AccelerometerMeasure(0, avgx / size, avgy / size, avgz / size);
+        return new AccelerometerMeasure(0, avgx / size, avgy / size, avgz / size,0f,0f,0f);
     }
 
     public synchronized AccelerometerMeasure getVariance() {
@@ -68,7 +68,7 @@ public class MyCircularQueue {
 
         int size = measures.size();
 
-        return new AccelerometerMeasure(0, varx / size, vary / size, varz / size);
+        return new AccelerometerMeasure(0, varx / size, vary / size, varz / size,0f,0f,0f);
     }
 
     public synchronized int size() {

@@ -48,6 +48,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 "acc_x REAL, " +
                 "acc_y REAL," +
                 "acc_z REAL," +
+                "angle_x REAL," +
+                "angle_y REAL," +
+                "angle_z REAL," +
                 "created_at TEXT)";
 
         db.execSQL(CREATE_SENSOR_TABLE);
@@ -127,8 +130,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_CREATED_AT = "created_at";
     private static final String KEY_LAT = "lat";
     private static final String KEY_LON = "lon";
+    private static final String KEY_ANGLE_X = "angle_x";
+    private static final String KEY_ANGLE_Y= "angle_y";
+    private static final String KEY_ANGLE_Z = "angle_z";
 
-    private static final String[] SENSOR_COLUMNS = {KEY_ID,KEY_TRIP,KEY_ACC_X,KEY_ACC_Y,KEY_ACC_Z,KEY_CREATED_AT};
+    private static final String[] SENSOR_COLUMNS = {KEY_ID,KEY_TRIP,KEY_ACC_X,KEY_ACC_Y,KEY_ACC_Z,KEY_ANGLE_X,KEY_ANGLE_Y,KEY_ANGLE_Z,KEY_CREATED_AT};
     private static final String[] DETECTION_COLUMNS = {KEY_ID,KEY_TRIP,KEY_TYPE,KEY_LAT,KEY_LON,KEY_CREATED_AT};
 
 
@@ -146,6 +152,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_ACC_X, sensorMeasure.getAcc_x());
         values.put(KEY_ACC_Y, sensorMeasure.getAcc_y());
         values.put(KEY_ACC_Z, sensorMeasure.getAcc_z());
+        values.put(KEY_ANGLE_X,sensorMeasure.angle_x);
+        values.put(KEY_ANGLE_Y,sensorMeasure.angle_y);
+        values.put(KEY_ANGLE_Z,sensorMeasure.angle_z);
         values.put(KEY_CREATED_AT, sensorMeasure.getDateTime());
 
         db.insert(TABLE_SENSOR, null, values);

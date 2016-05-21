@@ -4,14 +4,20 @@ public class AccelerometerMeasure extends SensorMeasure {
     private float acc_x;
     private float acc_y;
     private float acc_z;
+    public float angle_x;
+    public float angle_y;
+    public float angle_z;
 
     public AccelerometerMeasure(){super();}
 
-    public AccelerometerMeasure(int trip, float acc_x, float acc_y, float acc_z) {
+    public AccelerometerMeasure(int trip, float acc_x, float acc_y, float acc_z, float angle_x, float angle_y, float angle_z) {
         super(trip);
         this.acc_x = acc_x;
         this.acc_y = acc_y;
         this.acc_z = acc_z;
+        this.angle_x = angle_x;
+        this.angle_y = angle_y;
+        this.angle_z = angle_z;
     }
 
     public float getAcc_x() {

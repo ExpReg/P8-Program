@@ -52,6 +52,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
     protected float[] fusedOrientation = new float[9];
     protected float alpha = 0.99f;
     protected boolean init = true;
+    public float[] gyro = new float[3];
 
     //Taken from the ANDROID TURTORIAL http://developer.android.com/guide/topics/sensors/sensors_motion.html#sensors-motion-gyro
     private static final float NS2S = 1.0f / 1000000000.0f;
@@ -86,6 +87,7 @@ public class MyAccelerometerHandler extends MySensorHandler {
 
             case Sensor.TYPE_GYROSCOPE:
                 handleGyro(event);
+                System.arraycopy(event.values,0,gyro,0,3);
             break;
             case Sensor.TYPE_MAGNETIC_FIELD:
                 System.arraycopy(event.values,0,magnetic,0,3);
@@ -319,8 +321,8 @@ public class MyAccelerometerHandler extends MySensorHandler {
             mOutput = lowPassFilter(new float[]{acceleration[2], acceleration[2] - (gyroRotation[8] * 9.67f), acceleration[0]}, mOutput);
             // TODO Get calibrated average with the following commented line. Use key "pref_accVar" for the variance.
             // PreferenceManager.getDefaultSharedPreferences(mContext).getFloat("pref_accAvg", "someDefaultValue");
-            AccelerometerMeasure result = new AccelerometerMeasure(mTrip,mOutput[0],mOutput[1],mOutput[2]);
-               ;
+            AccelerometerMeasure result = new AccelerometerMeasure(mTrip,mOutput[0],mOutput[1],mOutput[2],gyro[0],gyro[1],gyro[2]);
+
             mCircularQueue.add(result);
             myList.add(result);
             act.runOnUiThread(new Runnable() {

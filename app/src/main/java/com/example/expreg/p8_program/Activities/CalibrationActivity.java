@@ -51,7 +51,7 @@ public class CalibrationActivity extends Activity implements SensorEventListener
     }
 
     public void onSensorChanged(SensorEvent event) {
-        AccelerometerMeasure measure = new AccelerometerMeasure(0, event.values[0], event.values[1], event.values[2]);
+        AccelerometerMeasure measure = new AccelerometerMeasure(0, event.values[0], event.values[1], event.values[2],0f,0f,0f);
         mQueue.add(measure);
         if (mQueue.isAtFullCapacity()) {
             finish();
